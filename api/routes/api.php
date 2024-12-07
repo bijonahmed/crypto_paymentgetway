@@ -72,6 +72,7 @@ Route::middleware(['auth:api', CheckUserStatus::class])->group(function () {
         'prefix' => 'user'
     ], function () {
         Route::get('getRoleList', [UserController::class, 'getRoleList']);
+        Route::get('getRoles', [UserController::class, 'getRoles']);
         Route::get('roleCheck', [UserController::class, 'roleCheck']);
         Route::post('saveRole', [UserController::class, 'saveRole']);
         Route::post('changePassword', [UserController::class, 'changePassword']);
@@ -83,37 +84,28 @@ Route::middleware(['auth:api', CheckUserStatus::class])->group(function () {
         Route::post('assignToUser', [UserController::class, 'assignToUser']);
         Route::get('findUserDetails', [UserController::class, 'findUserDetails']);
         Route::get('checkCurrentUser', [UserController::class, 'checkCurrentUser']);
-        Route::get('getUserRow/{id}', [UserController::class, 'editUserId']);
-        Route::get('allMerchant', [UserController::class, 'allMerchant']);
+        Route::get('getUserRow', [UserController::class, 'editUserId']);
+        Route::get('allUsers', [UserController::class, 'allUsers']);
         Route::get('allAdmin', [UserController::class, 'allAdmin']);
     });
 
     Route::group([
         'prefix' => 'category'
     ], function () {
-        Route::post('inserMiningCategory', [CategoryController::class, 'inserMiningCategory']);
-        Route::post('editMiningCategory', [CategoryController::class, 'editMiningCategory']);
+      
         Route::post('save', [CategoryController::class, 'save']);
         Route::post('edit', [CategoryController::class, 'edit']);
-        Route::post('saveAttribute', [CategoryController::class, 'saveAttribute']);
-        Route::post('saveAttributeVal', [CategoryController::class, 'saveAttributeVal']);
-        Route::get('getCategoryList', [CategoryController::class, 'allCategory']);
-        Route::get('allMiningCategoryes', [CategoryController::class, 'allMiningCategoryes']);
-        Route::get('getInacCategoryList', [CategoryController::class, 'allInacCategory']);
+     
+        Route::get('PostCategory', [CategoryController::class, 'PostCategory']);
+        Route::post('postCategorySave', [CategoryController::class, 'postCategorySave']);
+        Route::get('checkPostCategory', [CategoryController::class, 'checkPostCategory']);
+   
         Route::get('categoryRow/{id}', [CategoryController::class, 'findCategoryRow']);
-        Route::get('getCategoryListParent', [CategoryController::class, 'getCategoryListParent']);
-        Route::get('getSubCategoryChild/{id}', [CategoryController::class, 'getSubCategoryChild']);
-        Route::get('minningCategoryrow/{id}', [CategoryController::class, 'minningCategoryrow']);
-        Route::get('attributeRow/{id}', [CategoryController::class, 'attributeRow']);
-        Route::get('attributeValRow/{id}', [CategoryController::class, 'attributeValRow']);
-        Route::get('attributeValRows/{product_id}/{product_attribute_id}', [CategoryController::class, 'attributeValRows']);
         Route::get('search', [CategoryController::class, 'searchCategory']);
-        Route::get('attributes', [CategoryController::class, 'getAttribute']);
-        Route::get('attributes-list', [CategoryController::class, 'getAttributeList']);
-        Route::get('attributes-val-list', [CategoryController::class, 'getAttributeValList']);
+   
         Route::get('postCategorysearch', [CategoryController::class, 'postCategorysearch']);
         Route::get('allCategorys', [CategoryController::class, 'getCategoryList']);
-        Route::get('getCategoryUnderSubCat', [CategoryController::class, 'getCategoryUnderSubCat']);
+        Route::get('getPostCategory', [CategoryController::class, 'getPostCategorys']);
     });
 
 
@@ -121,7 +113,7 @@ Route::middleware(['auth:api', CheckUserStatus::class])->group(function () {
         'prefix' => 'post'
     ], function () {
 
-        Route::post('save', [PostController::class, 'save']);
+        Route::post('postInsert', [PostController::class, 'save']);
         Route::post('update', [PostController::class, 'update']);
         Route::get('postrow/{id}', [PostController::class, 'postrow']);
         Route::get('allPost', [PostController::class, 'allPostList']);

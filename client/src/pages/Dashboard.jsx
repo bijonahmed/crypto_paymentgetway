@@ -22,7 +22,7 @@ const Index = () => {
 
     <div>
       <Helmet>
-        <title>Welcome to FG</title>
+        <title>Dashboard [Payment Getway]</title>
       </Helmet>
       {/* Start */}
 

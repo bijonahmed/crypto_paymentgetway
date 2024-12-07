@@ -83,10 +83,10 @@ class PostController extends Controller
 
     public function save(Request $request)
     {
-        //dd($request->all());
+       // dd($request->all());
         $validator = Validator::make($request->all(), [
-            'name'           => 'required',
-            'categoryId'     => 'required',
+            'name'             => 'required',
+            'post_category_id' => 'required',
         ]);
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
@@ -95,12 +95,9 @@ class PostController extends Controller
         $data = array(
             'name'                       => $request->name,
             'slug'                       => $slug,
-            'description_short'          => !empty($request->description_short) ? $request->description_short : "",
-            'description_full'           => !empty($request->description_full) ? $request->description_full : "",
-            'question'                   => !empty($request->question) ? $request->question : "",
-            'answer'                     => !empty($request->answer) ? $request->answer : "",
-            'categoryId'                 => !empty($request->categoryId) ? $request->categoryId : "",
-            'status'                     => 1, //!empty($request->status) ? $request->status : "",
+            'description'                => !empty($request->description) ? $request->description : "",
+            'post_category_id'           => !empty($request->post_category_id) ? $request->post_category_id : "",
+            'status'                     => !empty($request->status) ? $request->status : "",
             'entry_by'                   => $this->userid
         );
         // dd($data);
@@ -116,7 +113,7 @@ class PostController extends Controller
             $data['thumnail_img'] = $file_url;
         }
         //Post::create($data);
-        $resdata['product_id'] = Post::insertGetId($data);
+        $resdata['post_id'] = Post::insertGetId($data);
         return response()->json($resdata);
     }
 

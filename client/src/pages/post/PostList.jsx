@@ -9,25 +9,17 @@ import Pagination from "../../components/Pagination";
 import axios from "/config/axiosConfig";
 import "../../components/css/RoleList.css";
 
-const MerchantList = () => {
-
+const PostList = () => {
   const [data, setData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState(1);
-
-  const [searchEmail, setFilterEmail] = useState("");
-  const [searchUsername, setFilterUsername] = useState("");
-
-
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(false);
+  const apiUrl = "/user/getRoleList";
   const navigate = useNavigate();
   const [sortOrder, setSortOrder] = useState("asc");
-  const merchant_rule = 2; 
-
-  const apiUrl = "/user/allUsers";
 
   const handleSort = () => {
     const sortedData = [...data].sort((a, b) => {
@@ -44,16 +36,7 @@ const MerchantList = () => {
     setSortOrder(sortOrder === "asc" ? "desc" : "asc");
   };
 
-  const handleEmailChange = (e) => {
-    setFilterEmail(e.target.value); 
-  };
-  
-
-  const handleUsernameChange = (e) => {
-    setFilterUsername(e.target.value); // Update state with the input value
-  };
   const fetchData = async () => {
-
     setLoading(true);
     try {
       const rawToken = sessionStorage.getItem("token");
@@ -69,10 +52,7 @@ const MerchantList = () => {
         params: {
           searchQuery,
           selectedFilter,
-          searchEmail,
-          searchUsername,
           page: currentPage,
-          merchant_rule,
           pageSize,
         },
       });
@@ -92,29 +72,28 @@ const MerchantList = () => {
     setCurrentPage(page);
   };
 
-
   const handlePageSizeChange = (e) => {
     setPageSize(Number(e.target.value));
   };
 
   const handleAddNewClick = () => {
-    navigate("/user/user-add");
+    navigate("/post/post-add");
   };
 
   const handleEdit = (id) => {
-    navigate(`/user/user-edit/${id}`);
+    navigate(`/user/role-edit/${id}`);
   };
 
 
   // Correctly closed useEffect hook
   useEffect(() => {
     fetchData();
-  }, [searchQuery, selectedFilter, searchEmail, searchUsername, currentPage, pageSize]);
+  }, [searchQuery, selectedFilter, currentPage, pageSize]);
 
   return (
     <>
       <Helmet>
-        <title>Merchant List</title>
+        <title>Post List</title>
       </Helmet>
 
       <div>
@@ -127,7 +106,7 @@ const MerchantList = () => {
           <div className="page-wrapper">
             <div className="page-content">
               <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-                <div className="breadcrumb-title pe-3">Merchant</div>
+                <div className="breadcrumb-title pe-3">Post</div>
                 <div className="ps-3">
                   <nav aria-label="breadcrumb">
                     <ol className="breadcrumb mb-0 p-0">
@@ -159,11 +138,11 @@ const MerchantList = () => {
                   <div className="container-fluid">
                     <div className="search-pagination-container">
                       <div className="row align-items-center mb-3">
-                        <div className="col-12 col-md-5 mb-2 mb-md-0">
+                        <div className="col-12 col-md-6 mb-2 mb-md-0">
                           <div className="searchbar">
                             <input
                               type="text"
-                              placeholder="Search name..."
+                              placeholder="Search..."
                               className="form-control"
                               value={searchQuery}
                               onChange={(e) => setSearchQuery(e.target.value)}
@@ -171,40 +150,13 @@ const MerchantList = () => {
                           </div>
                         </div>
 
-
                         <div className="col-12 col-md-2 mb-2 mb-md-0">
-                          <div className="searchbar">
-                            <input
-                              type="text"
-                              placeholder="Search email..."
-                              className="form-control"
-                              value={searchEmail}
-                              onChange={handleEmailChange}
-                              
-                            />
-                          </div>
-                        </div>
-
-
-                        <div className="col-12 col-md-2 mb-2 mb-md-0">
-                          <div className="searchbar">
-                            <input
-                              type="text"
-                              placeholder="Search username..."
-                              className="form-control"
-                              value={searchUsername}
-                              onChange={handleUsernameChange}
-                            />
-                          </div>
-                        </div>
-
-
-                        <div className="col-12 col-md-1 mb-2 mb-md-0">
                           <div className="searchbar">
                             <select
                               className="form-select"
                               value={pageSize}
-                              onChange={handlePageSizeChange}>
+                              onChange={handlePageSizeChange}
+                            >
                               <option value="10">10</option>
                               <option value="20">20</option>
                               <option value="50">50</option>
@@ -219,7 +171,7 @@ const MerchantList = () => {
                           </div>
                         </div>
 
-                        <div className="col-12 col-md-2 d-flex justify-content-between align-items-center gap-2">
+                        <div className="col-12 col-md-4 d-flex justify-content-between align-items-center gap-2">
                           <select
                             className="form-select"
                             value={selectedFilter}
@@ -264,12 +216,6 @@ const MerchantList = () => {
                                     </span>
                                   )}
                                 </th>
-
-
-                                <th className="text-center">Email</th>
-                                <th className="text-center">Company</th>
-                                <th className="text-center">Phone Number</th>
-                                <th className="text-center">Username</th>
                                 <th className="text-center">Status</th>
                                 <th className="text-center">Created Time</th>
                                 <th className="text-center">Action</th>
@@ -280,20 +226,15 @@ const MerchantList = () => {
                                 data.map((item) => (
                                   <tr key={item.id}>
                                     <td>{item.name}</td>
-                                    <td className="text-left">{item.email}</td>
-                                    <td className="text-center">{item.company}</td>
-                                    <td className="text-center">{item.whtsApp}</td>
-                                    <td className="text-left">{item.username}</td>
                                     <td className="text-center">{item.status}</td>
                                     <td className="text-center">{item.created_at}</td>
                                     <td className="text-center"><a href="#" onClick={() => handleEdit(item.id)}><i className="lni lni-pencil-alt"></i></a></td>
-
                                   </tr>
                                 ))
                               ) : (
                                 <tr>
                                   <td
-                                    colSpan="9"
+                                    colSpan="4"
                                     className="text-center">
                                     No data found
                                   </td>
@@ -329,4 +270,4 @@ const MerchantList = () => {
   );
 };
 
-export default MerchantList;
+export default PostList;

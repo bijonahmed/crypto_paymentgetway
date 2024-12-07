@@ -117,10 +117,7 @@ const Pagination = ({ totalPages, apiUrl, onPageChange }) => {
 
   return (
     <div>
-      {/* Render your data */}
-
-
-      {/* Pagination Controls */}
+    
       <div className="d-flex justify-content-center mt-3 gap-1">
         {renderPagination()}
       </div>

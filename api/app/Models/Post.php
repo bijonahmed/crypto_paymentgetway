@@ -14,11 +14,8 @@ class Post extends Authenticatable
     protected $fillable = [
         'name',
         'slug',
-        'description_short',
-        'description_full',
-        'question',
-        'answer',
-        'categoryId',
+        'description',
+        'post_category_id',
         'entry_by',
         'thumnail_img',
         'status'

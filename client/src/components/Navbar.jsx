@@ -6,6 +6,7 @@ import AuthUser from "../components/AuthUser";
 const Navbar = () => {
 
   const navigate = useNavigate(); // Move useNavigate inside the component
+
   const toggleTheme = () => {
     const htmlElement = document.documentElement; // <html> element
     const currentTheme = htmlElement.classList.contains('dark-theme') ? 'dark' : 'light';
@@ -21,6 +22,14 @@ const Navbar = () => {
     }
   };
   const { user, token, logout } = AuthUser();
+
+  const role = (() => {
+    if (user?.role_id === 1) return "Super Admin";
+    if (user?.role_id === 2) return "Merchant";
+    if (user?.role_id === 3) return "Admin";
+    return "Unknown Role"; // Default case
+  })();
+
   // Load theme from localStorage when the component mounts
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') || 'light'; // Default to light
@@ -30,7 +39,7 @@ const Navbar = () => {
     htmlElement.classList.add(`${savedTheme}-theme`);
 
 
-  }, [user, navigate]);
+  }, []);
 
   const logoutUser = async () => {
     if (token) {
@@ -59,8 +68,7 @@ const Navbar = () => {
               <a
                 className="nav-link dark-mode-icon"
                 href="#"
-                onClick={toggleTheme}
-              >
+                onClick={toggleTheme}>
                 <i className="bx bx-moon" />
               </a>
             </li>
@@ -70,18 +78,15 @@ const Navbar = () => {
         </div>
         <div className="user-box dropdown px-3">
           <a className="d-flex align-items-center nav-link dropdown-toggle gap-3 dropdown-toggle-nocaret" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <img src="/assets/images/avatars/avatar-2.png" className="user-img" />
+            <img src="/assets/images/avatars/usdt.png" className="user-img" />
             <div className="user-info">
-              <p className="user-name mb-0">Pauline Seitz</p>
-              <p className="designattion mb-0">Web Designer</p>
+              <p className="user-name mb-0">{user?.name || user?.email}</p>
+              <p className="designattion mb-0">{role}</p>
             </div>
           </a>
           <ul className="dropdown-menu dropdown-menu-end">
-            <li><a className="dropdown-item d-flex align-items-center" href="#"><i className="bx bx-user fs-5" /><span>Profile</span></a>
+            <li><Link className="dropdown-item d-flex align-items-center" to="/user/profile"><i className="bx bx-user fs-5" /><span>Profile</span></Link>
             </li>
-            <li><a className="dropdown-item d-flex align-items-center" href="#"><i className="bx bx-cog fs-5" /><span>Settings</span></a>
-            </li>
-           
             <li>
               <div className="dropdown-divider mb-0" />
             </li>

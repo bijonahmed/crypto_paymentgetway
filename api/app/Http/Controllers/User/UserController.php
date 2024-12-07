@@ -112,6 +112,16 @@ class UserController extends Controller
         return response()->json($response, 200);
     }
 
+    public function getRoles(Request $request)
+    {
+        $data = Role::where('status', 1)->get();
+        $response = [
+            'data' => $data,
+            'message' => 'success'
+        ];
+        return response()->json($response, 200);
+    }
+
     public function getRoleList(Request $request)
     {
 
@@ -154,58 +164,6 @@ class UserController extends Controller
         ], 200);
     }
 
-    public function allAdmin(Request $request)
-    {
-
-        $page = $request->input('page', 1);
-        $pageSize = $request->input('pageSize', 10);
-
-        // Get search query from the request
-        $searchQuery    = $request->searchQuery;
-        $selectedFilter = (int)$request->selectedFilter;
-        // dd($selectedFilter);
-        $query = User::orderBy('users.id', 'desc')
-            ->join('rule', 'users.role_id', '=', 'rule.id')
-            ->select('users.created_at', 'users.updated_at', 'lastlogin_country', 'register_ip', 'lastlogin_ip', 'users.ref_id', 'users.telegram', 'users.whtsapp', 'users.role_id', 'users.id', 'users.name', 'users.email', 'users.phone_number', 'users.show_password', 'users.status', 'rule.name as rulename');
-        if ($searchQuery !== null) {
-            $query->where('users.name', 'like', '%' . $searchQuery . '%');
-        }
-
-        if ($selectedFilter !== null) {
-            $query->where('users.status', $selectedFilter);
-        }
-        $query->where('users.role_id', 3);
-        $paginator = $query->paginate($pageSize, ['*'], 'page', $page);
-
-        $modifiedCollection = $paginator->getCollection()->map(function ($item) {
-
-            $status         = $item->status == 1  ? 'Active' : "None";
-            $ref_id         = !empty($item->ref_id) ? $item->ref_id : ""; //$item->ref_id == 1  ? 'Active' : "None";
-            $chkInviteUser  = User::where('id', $ref_id)->select('name', 'phone_number', 'email')->first();
-            $registerIP     = $item->register_ip;
-            $ipdat = @json_decode(file_get_contents(
-                "http://www.geoplugin.net/json.gp?ip=" . $registerIP
-            ));
-
-            return [
-                'id'            => $item->id,
-                'name'          => substr($item->name, 0, 250),
-                'rulename'      => substr($item->rulename, 0, 250),
-                'email'         => $item->email,
-                'phone_number'  => $item->phone_number,
-                'show_password' => $item->show_password,
-                'status'        => $status,
-            ];
-        });
-        // Return the modified collection along with pagination metadata
-        return response()->json([
-            'data' => $modifiedCollection,
-            'current_page' => $paginator->currentPage(),
-            'total_pages' => $paginator->lastPage(),
-            'total_records' => $paginator->total(),
-        ], 200);
-    }
-
     public function findUserDetails(Request $request)
     {
 
@@ -215,7 +173,7 @@ class UserController extends Controller
 
     }
 
-    public function allMerchant(Request $request)
+    public function allUsers(Request $request)
     {
 
         $page = $request->input('page', 1);
@@ -224,9 +182,9 @@ class UserController extends Controller
         // Get search query from the request
         $searchQuery        = $request->searchQuery;
         $selectedFilter     = (int)$request->selectedFilter;
+        $merchant_rule      = (int)$request->merchant_rule;
         $selectEmail        = $request->searchEmail;
         $selectedUsername   = $request->searchUsername;
-
 
         // dd($selectedFilter);
         $query = User::orderBy('users.id', 'desc')
@@ -235,23 +193,20 @@ class UserController extends Controller
 
         if ($searchQuery !== null) {
             $query->where('users.name', 'like', '%' . $searchQuery . '%');
-            // $query->where('users.name', $searchQuery);
         }
 
         if ($selectEmail !== null) {
-            //$query->where('users.email', 'like', '%' . $searchQuery . '%');
             $query->where('users.email', $selectEmail);
         }
 
         if ($selectedUsername !== null) {
-            //$query->where('users.email', 'like', '%' . $searchQuery . '%');
             $query->where('users.username', $selectedUsername);
         }
 
         if ($selectedFilter !== null) {
             $query->where('users.status', $selectedFilter);
         }
-        $query->where('users.role_id', 2);
+        $query->where('users.role_id', $merchant_rule);
         $paginator = $query->paginate($pageSize, ['*'], 'page', $page);
 
         $modifiedCollection = $paginator->getCollection()->map(function ($item) {
@@ -276,12 +231,12 @@ class UserController extends Controller
                 'lastlogin_ip'  => $item->lastlogin_ip,
                 'created_at'    => date("Y-M-d", strtotime($item->created_at)), //$item->created_at,
                 'updated_at'    => date("Y-M-d H:i:s", strtotime($item->updated_at)), //$item->updated_at,
-                'phone_number'  => $item->phone_number,
+                'phone_number'  => $item->phone,
                 'show_password' => $item->show_password,
                 'company'       => $item->company_name,
                 'username'      => $item->username,
                 'telegram'      => $telegram,
-                'whtsApp'       => $whtsapp,
+                'whtsApp'       => $item->phone,
                 'status'        => $status,
             ];
         });
@@ -294,12 +249,13 @@ class UserController extends Controller
         ], 200);
     }
 
-    public function editUserId($id)
+    public function editUserId(Request $request)
     {
-        $data = User::checkUserRow($id);
+        $id = $request->userId ?? "";
+        $data = User::find($id);
 
         $response = [
-            'data' => $data,
+            'data'     => $data,
             'dataImg'  => !empty($data->image) ? url($data->image) : "",
             'doc_file' => !empty($data->doc_file) ? url($data->doc_file) : "",
             'message'  => 'success'
@@ -363,84 +319,55 @@ class UserController extends Controller
         return response()->json($response);
     }
 
-    public function updateUser(Request $request)
-    {
-        //dd($request->all());
-        $validator = Validator::make($request->all(), [
-            'fname'             => 'required|max:255',
-            'lname'             => 'required|max:255',
-            'email'             => 'required|email|max:255',
-            'phone_number'      => 'required|max:255',
-            'nationality_id'    => 'required|max:255',
-            //'file'              => 'required|file|mimes:jpeg,png,jpg,gif|max:2048',
-            'whtsapp'           => 'required|string|max:20',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-
-        $user = User::find($this->userid);
-        if ($request->email === $user->email) {
-            // $unqie=uniqid();
-            //  $email= $request->email.$unqie;
-        } else {
-            $email = $request->email;
-        }
-
-        $data['f_name']          = $request->fname;
-        $data['l_name']          = $request->lname;
-        $data['name']            = $request->fname . ' ' . $request->lname;
-        $data['phone_number']    = $request->phone_number;
-        $data['email']           = $request->email;
-        $data['whtsapp']         = $request->whtsapp;
-        $data['nationality_id']  = $request->nationality_id;
-
-        if (!empty($request->file('file'))) {
-            $files = $request->file('file');
-            $fileName = Str::random(20);
-            $ext = strtolower($files->getClientOriginalExtension());
-            $path = $fileName . '.' . $ext;
-            $uploadPath = '/backend/files/';
-            $upload_url = $uploadPath . $path;
-            $files->move(public_path('/backend/files/'), $upload_url);
-            $file_url = $uploadPath . $path;
-            $data['image'] = $file_url;
-        }
-
-        User::where('id', $this->userid)->update($data);
-        $response = [
-            'message' => 'User successfully update:',
-        ];
-        return response()->json($response);
-    }
-
     public function saveUser(Request $request)
     {
         //dd($request->all());
-        $validator = Validator::make($request->all(), [
-            'role_id'    => 'required',
-            'name'       => 'required',
-            'phone'      => 'required',
-            'email'      => 'required|email',
-            // 'email' => 'required|email|unique:users',
-            'password' => 'min:2|required_with:password_confirmation|same:password_confirmation',
-            'password_confirmation' => 'min:2'
-        ]);
+        if (empty($request->id)) {
+            $validator = Validator::make($request->all(), [
+                'rule_id'    => 'required',
+                'name'       => 'required',
+                'phone'      => 'required',
+                'email'      => 'required|email',
+                'company'    => 'required',
+                'status'     => 'required',
+                'username'   => 'required|unique:users,username|max:255',
+                'password'   => 'min:5|required',
+            ]);
+        } else {
+            $validator = Validator::make($request->all(), [
+                'rule_id'    => 'required',
+                'name'       => 'required',
+                'phone'      => 'required',
+                'email'      => 'required|email',
+                'company'    => 'required',
+                'status'     => 'required',
+            ]);
+        }
+
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
+
         $data = array(
-            'role_id'       => !empty($request->role_id) ? $request->role_id : "",
+            'role_id'       => !empty($request->rule_id) ? $request->rule_id : "",
             'name'          => !empty($request->name) ? $request->name : "",
-            'address'       => !empty($request->address) ? $request->address : "",
-            'phone_number'  => !empty($request->phone) ? $request->phone : "",
+            'phone'         => !empty($request->phone) ? $request->phone : "",
             'email'         => !empty($request->email) ? $request->email : "",
-            'password'      => !empty($request->password) ? Hash::make($request->password) : "",
-            'show_password' => !empty($request->password) ? $request->password : "",
             'status'        => $request->status,
             'entry_by'      => $this->userid,
         );
+        // Handle new record creation
+        if (empty($request->id)) {
+            $data['password'] = !empty($request->password) ? Hash::make($request->password) : "";
+            $data['show_password'] = $request->password ?? "";
+        } else {
+            // Handle existing record update
+            if (!empty($request->password)) {
+                $data['password'] = Hash::make($request->password);
+                $data['show_password'] = $request->password;
+            }
+        }
+
         if (!empty($request->file('file'))) {
             $files = $request->file('file');
             $fileName = Str::random(20);
@@ -454,16 +381,17 @@ class UserController extends Controller
         }
 
         if (empty($request->id)) {
-            $userId = DB::table('users')->insertGetId($data);
+            $userId = User::insertGetId($data);
         } else {
             $userId = $request->id;
-            DB::table('users')->where('id', $request->id)->update($data);
+            User::where('id', $request->id)->update($data);
         }
         $response = [
             'message' => 'User register successfully insert UserID:' . $userId
         ];
         return response()->json($response);
     }
+
     public function assignToUser(Request $request)
     {
         $validator = Validator::make($request->all(), [

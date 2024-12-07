@@ -1,21 +1,23 @@
-// src/App.js
-import React from "react";
+import React, { useEffect } from 'react';
 import { Link } from "react-router-dom";
 import AppRouter from "./rotuer";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import AuthUser from "./components/AuthUser";
 
 
 function App() {
   const navigate = useNavigate();
   const { user } = AuthUser();
-  if (!user) {
-    navigate('/login'); // Redirect to the login page if `user` is null or undefined
-  }
+
+  useEffect(() => {
+    if (!user) {
+      navigate('/login'); // Redirect to the login page if `user` is null or undefined
+    }
+  }, []); // The effect depends on the `user` and `navigate`
+
   return (
     <div>
-        <AppRouter />
-
+      <AppRouter />
     </div>
   );
 }

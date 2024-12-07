@@ -39,8 +39,6 @@ export default function AuthUser() {
 
     const http = axios.create({
         baseURL: process.env.NODE_ENV === 'production' ? 'https://api.totomonkey.com/api/' : 'http://127.0.0.1:8000/api/',
-        // baseURL:"http://localhost:8000/api",
-        //   baseURL:"https://api.funflixhd.com/api",
         headers: {
             "Content-type": "application/json",
             "Authorization": `Bearer ${token}`

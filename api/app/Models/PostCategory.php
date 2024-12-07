@@ -12,6 +12,7 @@ class PostCategory extends Authenticatable
     use HasApiTokens, HasFactory, Notifiable;
     public $table = "post_category";
     protected $fillable = [
+        'id', 
         'name',
         'status',
     ];

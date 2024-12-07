@@ -9,7 +9,7 @@ import Pagination from "../../components/Pagination";
 import axios from "/config/axiosConfig";
 import "../../components/css/RoleList.css";
 
-const MerchantList = () => {
+const AdminList = () => {
 
   const [data, setData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -25,7 +25,7 @@ const MerchantList = () => {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [sortOrder, setSortOrder] = useState("asc");
-  const merchant_rule = 2; 
+  const merchant_rule = 3; 
 
   const apiUrl = "/user/allUsers";
 
@@ -114,7 +114,7 @@ const MerchantList = () => {
   return (
     <>
       <Helmet>
-        <title>Merchant List</title>
+        <title>Admin List</title>
       </Helmet>
 
       <div>
@@ -127,7 +127,7 @@ const MerchantList = () => {
           <div className="page-wrapper">
             <div className="page-content">
               <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-                <div className="breadcrumb-title pe-3">Merchant</div>
+                <div className="breadcrumb-title pe-3">Admin</div>
                 <div className="ps-3">
                   <nav aria-label="breadcrumb">
                     <ol className="breadcrumb mb-0 p-0">
@@ -329,4 +329,4 @@ const MerchantList = () => {
   );
 };
 
-export default MerchantList;
+export default AdminList;

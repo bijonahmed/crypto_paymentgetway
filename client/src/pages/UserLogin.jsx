@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
-import GuestNavbar from "../components/GuestNavbar";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import axios from "/config/axiosConfig";

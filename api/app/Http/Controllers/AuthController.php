@@ -343,23 +343,7 @@ class AuthController extends Controller
         ];
         return response()->json($response);
     }
-    public function showProfileData(Request $request)
-    {
-        
-        $userid              = $request->userId;
-        $row                 = User::find($userid);
-        $res['email']        =  is_string($row->email) ? $row->email : json_encode($row->email);
-        $res['name']         =  is_string($row->name) ? $row->name : json_encode($row->name);
-        $res['phone_number'] =  is_string($row->phone_number) ? $row->phone_number : json_encode($row->phone_number);
-        $res['twitter']      =  is_string($row->twitter) ? $row->twitter : json_encode($row->twitter);
-        $res['facebook']     =  is_string($row->facebook) ? $row->facebook : json_encode($row->facebook);
-        $res['whtsapp']      =  is_string($row->whtsapp) ? $row->whtsapp : json_encode($row->whtsapp);
-        $res['website']      =  is_string($row->website) ? $row->website : json_encode($row->website);
-        $res['telegram']     =  is_string($row->telegram) ? $row->telegram : json_encode($row->telegram);
-        $res['id']     =  $userid;
-
-        return response()->json($res);
-    }
+    
     public function changesPassword(Request $request)
     {
         $validator = Validator::make($request->all(), [

@@ -9,39 +9,53 @@ import Register from "../pages/Register";
 import Login from "../pages/Login";
 import UserLogin from "../pages/UserLogin.jsx";
 import ChangePassword from "../pages/users/ChangePassword.jsx";
-import HosterProfile from "../pages/users/Profile.jsx";
-
 //For Admin Panel 
 import Dashboard from "../pages/Dashboard";
-import UserProfile from "../pages/users/Profile.jsx";
+
 import MyProfile from "../pages/users/MyProfile.jsx";
 import MerchantList from "../pages/users/MerchantList.jsx";
 import RoleList from "../pages/users/RoleList.jsx";
 import RoleAdd from "../pages/users/Addrole.jsx";
+
 import RoleEdit from "../pages/users/EditRole.jsx";
- 
+import UserEdit from "../pages/users/EditUser.jsx";
+import SuperAdminList from "../pages/users/SuperAdminList.jsx";
+import AdminList from "../pages/users/AdminList.jsx";
+import UserAdd from "../pages/users/UserAdd.jsx";
+import PostCategoryList from "../pages/category/PostCategoryList.jsx";
+import PostCategoryAdd from "../pages/category/PostCategoryAdd.jsx";
+import PostCategoryEdit from "../pages/category/PostCategoryEdit.jsx";
+import PostList from "../pages/post/PostList.jsx";
+import PostAdd from "../pages/post/PostAdd.jsx";
+
 
 const AppRouter = () => {
   return (
     <Routes>
       {/* <Route path="/" element={<Index />} /> */}
-      <Route path="/" element={<Login />} />
-
-      <Route path="/my-profile" element={<MyProfile />} />
+      <Route path="/" element={<Index />} />
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
       <Route path="/user-login" element={<UserLogin />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/forget-password" element={<Forgetpassword />} />
-      <Route path="/hoster-profile" element={<HosterProfile />} />
-      <Route path="/user/profile" element={<UserProfile />} />
+
+      <Route path="/user/profile" element={<MyProfile />} />
       <Route path="/user/role-list" element={<RoleList />} />
       <Route path="/user/role-add" element={<RoleAdd />} />
+      <Route path="/user/user-add" element={<UserAdd />} />
       <Route path="/user/role-edit/:id" element={<RoleEdit />} />
+      <Route path="/user/user-edit/:id" element={<UserEdit />} />
       <Route path="/user/merchant-list" element={<MerchantList />} />
-      {/* <Route path="/users/change-password" element={<ChangePassword />} /> */}
+      <Route path="/user/superadmin-list" element={<SuperAdminList />} />
+      <Route path="/user/admin-list" element={<AdminList />} />
+  
       <Route path="/user/change-password" element={<ChangePassword />} />
-      {/* //Admin Route */}
+      <Route path="/category/post-category-list" element={<PostCategoryList />} /> 
+      <Route path="/category/post-categoryAdd" element={<PostCategoryAdd />} /> 
+      <Route path="/category/post-category-edit/:id" element={<PostCategoryEdit />} /> 
+      <Route path="/post/post-list" element={<PostList />} /> 
+      <Route path="/post/post-add" element={<PostAdd />} /> 
       <Route path="/dashboard" element={<Dashboard />} />
     </Routes>
   );

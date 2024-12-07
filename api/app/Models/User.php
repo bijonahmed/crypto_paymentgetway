@@ -14,8 +14,8 @@ class User extends Authenticatable implements JWTSubject
   public $table = "users";
   protected $fillable = [
     'name',
-    'f_name',
-    'l_name',
+    'username',
+    'company',
     'email',
     'level_commission',
     'inviteCode',
@@ -24,8 +24,6 @@ class User extends Authenticatable implements JWTSubject
     'ref_id',
     'doc_file',
     'telegram',
-    'company_name',
-    'username',
     'whtsapp',
     'nationality_id',
     'register_ip',
@@ -37,6 +35,7 @@ class User extends Authenticatable implements JWTSubject
     'available_balance',
     'fg_id',
     'status',
+    'phone',
     'fg_wallet_address',
 
   ];

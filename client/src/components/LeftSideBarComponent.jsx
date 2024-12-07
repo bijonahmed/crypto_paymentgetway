@@ -29,16 +29,14 @@ const LeftSideBarComponent = () => {
 
   const { user } = AuthUser();
   useEffect(() => {
-    if (!user) {
-      navigate('/login');
-    }
-  }, [user, navigate]);
+   
+  }, []);
 
   return (
     <div className="sidebar-wrapper" data-simplebar="true">
       <div className="sidebar-header">
         <div>
-          <img src="/assets/images/logo-icon.png" className="logo-icon" />
+          <img src="/assets/images/avatars/futuregenit-logo.png" className="logo-icon" />
         </div>
         <div>
           <h4 className="logo-text" style={{ fontSize: '15px' }}>Payment Getway</h4>

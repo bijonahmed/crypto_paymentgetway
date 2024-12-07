@@ -4,34 +4,11 @@ namespace App\Http\Controllers\Public;
 
 use Cart;
 use Carbon\Carbon;
-use App\Models\Game;
-use App\Models\User;
-use App\Models\Order;
-use App\Models\Videos;
-use App\Models\Gallery;
-use App\Models\GameList;
 use App\Models\GamesAll;
 use App\Models\GameType;
-//use Darryldecode\Cart\Cart;
-use App\Models\ApiConfig;
-use App\Models\Categorys;
-use App\Models\GameCategory;
-use App\Models\GamePlatform;
-use App\Models\HostersModel;
 use Illuminate\Http\Request;
-use App\Models\Chaturbateapi;
-use App\Models\GamePlatforms;
-use App\Models\MystoreHistory;
-use App\Models\VideosThunmnail;
-use App\Jobs\ProcessExcelUpload;
 use App\Models\GamelistTransate;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Storage;
-use PhpOffice\PhpSpreadsheet\IOFactory;
-use Illuminate\Support\Facades\Redirect;
 
 class PublicController extends Controller
 {
@@ -46,32 +23,33 @@ class PublicController extends Controller
                 'submenu' => []
             ],
             [
-                'label' => 'User Management',
+                'label' => 'User',
                 'path' => '#',
                 'icon' => 'bx bx-category',
                 'submenu' => [
                     ['label' => 'Role List', 'path' => '/user/role-list', 'icon' => 'bx bx-radio-circle'],
                     ['label' => 'Permission List', 'path' => '#', 'icon' => 'bx bx-radio-circle'],
                     ['label' => 'Assign List', 'path' => '#', 'icon' => 'bx bx-radio-circle'],
-                    ['label' => 'Super Admin List', 'path' => '/user/merchant-list', 'icon' => 'bx bx-radio-circle'],
-                    ['label' => 'Admin List', 'path' => '/user/merchant-list', 'icon' => 'bx bx-radio-circle'],
+                    ['label' => 'Super Admin List', 'path' => '/user/superadmin-list', 'icon' => 'bx bx-radio-circle'],
+                    ['label' => 'Admin List', 'path' => '/user/admin-list', 'icon' => 'bx bx-radio-circle'],
                     ['label' => 'Merchant List', 'path' => '/user/merchant-list', 'icon' => 'bx bx-radio-circle']
                 ]
             ],
             [
-                'label' => 'Post Management',
+                'label' => 'Post',
                 'path' => '#',
                 'icon' => 'bx bx-category',
                 'submenu' => [
-                    ['label' => 'Category List', 'path' => '#', 'icon' => 'bx bx-radio-circle'],
-                    ['label' => 'Post List', 'path' => 'app-chat-box.html', 'icon' => 'bx bx-radio-circle']
+                    ['label' => 'Post Category List', 'path' => '/category/post-category-list', 'icon' => 'bx bx-radio-circle'],
+                    ['label' => 'Post List', 'path' => '/post/post-list', 'icon' => 'bx bx-radio-circle']
                 ]
             ],
             [
-                'label' => 'System Management',
+                'label' => 'System',
                 'path' => '#',
                 'icon' => 'bx bx-category',
                 'submenu' => [
+                    ['label' => 'Global Category List', 'path' => 'category/list', 'icon' => 'bx bx-radio-circle'],
                     ['label' => 'Configuration System', 'path' => 'app-emailbox.html', 'icon' => 'bx bx-radio-circle'],
                     ['label' => 'Wallet Address', 'path' => 'app-chat-box.html', 'icon' => 'bx bx-radio-circle']
                 ]
