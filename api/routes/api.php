@@ -12,6 +12,7 @@ use App\Http\Controllers\Public\PublicController;
 use App\Http\Controllers\Setting\SettingController;
 use App\Http\Controllers\UnauthenticatedController;
 use App\Http\Controllers\Category\CategoryController;
+use App\Http\Controllers\Wallet\WalletAddressController;
 use App\Http\Controllers\Game\GameController as Gcontroller;
 
 Route::get('/clear-cache', function () {
@@ -29,22 +30,15 @@ Route::get('/clear-cache', function () {
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-
-
-
-
 Route::get('settingrowClient', [UnauthenticatedController::class, 'settingrowClient']);
-
 Route::group([
     'middleware' => 'api',
     'prefix'     => 'auth'
 ], function () {
     Route::post('userRegister', [UserAuthController::class, 'userRegister']);
     Route::post('userLogin', [UserAuthController::class, 'login']);
-
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login']);
-
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('refresh', [AuthController::class, 'refresh']);
     Route::post('profile', [AuthController::class, 'profile']);
@@ -64,8 +58,6 @@ Route::group([
     Route::get('/filterGames', [PublicController::class, 'filterGames']);
 });
 
-
-
 Route::middleware(['auth:api', CheckUserStatus::class])->group(function () {
 
     Route::group([
@@ -81,56 +73,62 @@ Route::middleware(['auth:api', CheckUserStatus::class])->group(function () {
         Route::post('saveUser', [UserController::class, 'saveUser']);
         Route::post('updateUser', [UserController::class, 'updateUser']);
         Route::post('updateUserProfileImg', [UserController::class, 'updateUserProfileImg']);
-        Route::post('assignToUser', [UserController::class, 'assignToUser']);
+        Route::get('getOnlyMerchantList', [UserController::class, 'getOnlyMerchantList']);
         Route::get('findUserDetails', [UserController::class, 'findUserDetails']);
         Route::get('checkCurrentUser', [UserController::class, 'checkCurrentUser']);
         Route::get('getUserRow', [UserController::class, 'editUserId']);
         Route::get('allUsers', [UserController::class, 'allUsers']);
-        Route::get('allAdmin', [UserController::class, 'allAdmin']);
     });
 
     Route::group([
         'prefix' => 'category'
     ], function () {
-      
+
         Route::post('save', [CategoryController::class, 'save']);
         Route::post('edit', [CategoryController::class, 'edit']);
-     
+
         Route::get('PostCategory', [CategoryController::class, 'PostCategory']);
         Route::post('postCategorySave', [CategoryController::class, 'postCategorySave']);
+        Route::post('GeneralCategorySave', [CategoryController::class, 'GeneralCategorySave']);
         Route::get('checkPostCategory', [CategoryController::class, 'checkPostCategory']);
-   
+        Route::get('checkGeneralCategory', [CategoryController::class, 'checkGeneralCategory']);
+
         Route::get('categoryRow/{id}', [CategoryController::class, 'findCategoryRow']);
         Route::get('search', [CategoryController::class, 'searchCategory']);
-   
+
         Route::get('postCategorysearch', [CategoryController::class, 'postCategorysearch']);
         Route::get('allCategorys', [CategoryController::class, 'getCategoryList']);
+        Route::get('GeneralCategoryList', [CategoryController::class, 'GeneralCategoryList']);
         Route::get('getPostCategory', [CategoryController::class, 'getPostCategorys']);
     });
-
 
     Route::group([
         'prefix' => 'post'
     ], function () {
-
         Route::post('postInsert', [PostController::class, 'save']);
         Route::post('update', [PostController::class, 'update']);
-        Route::get('postrow/{id}', [PostController::class, 'postrow']);
-        Route::get('allPost', [PostController::class, 'allPostList']);
+        Route::get('getPostrow', [PostController::class, 'postrow']);
+        Route::get('getPostList', [PostController::class, 'allPostList']);
         Route::get('postCategoryData', [PostController::class, 'postCategoryData']);
     });
 
+    Route::group([
+        'prefix' => 'wallet'
+    ], function () {
+        Route::get('globalWalletAddressList', [WalletAddressController::class, 'globalWalletAddressList']);
+        Route::post('save', [WalletAddressController::class, 'save']);
+        Route::get('checkWalletInfo', [WalletAddressController::class, 'checkWalletInfo']);
+    });
 
     Route::group([
         'prefix' => 'setting'
     ], function () {
         Route::post('insertLanguageAdd', [SettingController::class, 'insertLanguageAdd']);
-        Route::post('upateSetting', [SettingController::class, 'upateSetting']);
+        Route::post('saveAPIKey', [SettingController::class, 'saveAPIKey']);
+        Route::get('searchByConfigrationApiKey', [SettingController::class, 'searchByConfigrationApiKey']);
         Route::get('settingrowSystem', [SettingController::class, 'settingrow']);
         Route::get('getLanguageList', [SettingController::class, 'getLanguageList']);
         Route::get('getLanguageActiveList', [SettingController::class, 'getLanguageActiveList']);
-        Route::get('getTranslationList', [SettingController::class, 'getTranslationList']);
         Route::get('languagerow/{id}', [SettingController::class, 'chkLanguagerow']);
-        Route::get('updateTransationRow', [SettingController::class, 'updateTransationRow']);
     });
 });

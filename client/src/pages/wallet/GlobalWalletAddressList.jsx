@@ -9,10 +9,13 @@ import Pagination from "../../components/Pagination";
 import axios from "/config/axiosConfig";
 import "../../components/css/RoleList.css";
 
-const PostList = () => {
+const GlobalWalletAddressList = () => {
+
   const [data, setData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedFilter, setSelectedFilter] = useState(1);
+
+
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
@@ -20,10 +23,8 @@ const PostList = () => {
   const navigate = useNavigate();
   const [sortOrder, setSortOrder] = useState("asc");
 
-  const apiUrl = "/post/getPostList";
 
-
-
+  const apiUrl = "/wallet/globalWalletAddressList";
 
   const handleSort = () => {
     const sortedData = [...data].sort((a, b) => {
@@ -76,16 +77,17 @@ const PostList = () => {
     setCurrentPage(page);
   };
 
+
   const handlePageSizeChange = (e) => {
     setPageSize(Number(e.target.value));
   };
 
   const handleAddNewClick = () => {
-    navigate("/post/post-add");
+    navigate("/wallet/global-wallet-address-add");
   };
 
   const handleEdit = (id) => {
-    navigate(`/post/post-edit/${id}`);
+    navigate(`/wallet/global-wallet-edit/${id}`);
   };
 
 
@@ -97,7 +99,7 @@ const PostList = () => {
   return (
     <>
       <Helmet>
-        <title>Post List</title>
+        <title>Global Wallet Address List</title>
       </Helmet>
 
       <div>
@@ -110,7 +112,7 @@ const PostList = () => {
           <div className="page-wrapper">
             <div className="page-content">
               <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-                <div className="breadcrumb-title pe-3">Post</div>
+                <div className="breadcrumb-title pe-3">Global TronScan Wallet Address</div>
                 <div className="ps-3">
                   <nav aria-label="breadcrumb">
                     <ol className="breadcrumb mb-0 p-0">
@@ -130,8 +132,7 @@ const PostList = () => {
                   <button
                     type="button"
                     className="btn btn-primary"
-                    onClick={handleAddNewClick}
-                  >
+                    onClick={handleAddNewClick}>
                     Add New
                   </button>
                 </div>
@@ -142,11 +143,11 @@ const PostList = () => {
                   <div className="container-fluid">
                     <div className="search-pagination-container">
                       <div className="row align-items-center mb-3">
-                        <div className="col-12 col-md-6 mb-2 mb-md-0">
+                        <div className="col-12 col-md-5 mb-2 mb-md-0">
                           <div className="searchbar">
                             <input
                               type="text"
-                              placeholder="Search..."
+                              placeholder="Search address..."
                               className="form-control"
                               value={searchQuery}
                               onChange={(e) => setSearchQuery(e.target.value)}
@@ -154,13 +155,14 @@ const PostList = () => {
                           </div>
                         </div>
 
-                        <div className="col-12 col-md-2 mb-2 mb-md-0">
+
+
+                        <div className="col-12 col-md-1 mb-2 mb-md-0">
                           <div className="searchbar">
                             <select
                               className="form-select"
                               value={pageSize}
-                              onChange={handlePageSizeChange}
-                            >
+                              onChange={handlePageSizeChange}>
                               <option value="10">10</option>
                               <option value="20">20</option>
                               <option value="50">50</option>
@@ -175,7 +177,7 @@ const PostList = () => {
                           </div>
                         </div>
 
-                        <div className="col-12 col-md-4 d-flex justify-content-between align-items-center gap-2">
+                        <div className="col-12 col-md-2 d-flex justify-content-between align-items-center gap-2">
                           <select
                             className="form-select"
                             value={selectedFilter}
@@ -207,7 +209,7 @@ const PostList = () => {
                                 <th className="text-center"
                                   onClick={handleSort}
                                   style={{ cursor: "pointer" }}>
-                                  Name
+                                  Address
                                   {sortOrder === "asc" ? (
                                     <span
                                       style={{ marginLeft: "5px", fontSize: "14px", }}>
@@ -220,8 +222,8 @@ const PostList = () => {
                                     </span>
                                   )}
                                 </th>
+                               
                                 <th className="text-center">Status</th>
-                                <th className="text-center">Created Time</th>
                                 <th className="text-center">Action</th>
                               </tr>
                             </thead>
@@ -231,14 +233,14 @@ const PostList = () => {
                                   <tr key={item.id}>
                                     <td>{item.name}</td>
                                     <td className="text-center">{item.status}</td>
-                                    <td className="text-center">{item.created_at}</td>
                                     <td className="text-center"><a href="#" onClick={() => handleEdit(item.id)}><i className="lni lni-pencil-alt"></i></a></td>
+
                                   </tr>
                                 ))
                               ) : (
                                 <tr>
                                   <td
-                                    colSpan="4"
+                                    colSpan="9"
                                     className="text-center">
                                     No data found
                                   </td>
@@ -274,4 +276,4 @@ const PostList = () => {
   );
 };
 
-export default PostList;
+export default GlobalWalletAddressList;

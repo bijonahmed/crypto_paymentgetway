@@ -27,12 +27,21 @@ import PostCategoryAdd from "../pages/category/PostCategoryAdd.jsx";
 import PostCategoryEdit from "../pages/category/PostCategoryEdit.jsx";
 import PostList from "../pages/post/PostList.jsx";
 import PostAdd from "../pages/post/PostAdd.jsx";
-
+import PostEdit from "../pages/post/PostEdit.jsx";
+import GeneralCategoryList from "../pages/category/GeneralCategoryList.jsx";
+import GeneralCategoryAdd from "../pages/category/GeneralCategoryAdd.jsx";
+import GeneralCategoryEdit from "../pages/category/GeneralCategoryEdit.jsx";
+import GlobalWalletAddressList from "../pages/wallet/GlobalWalletAddressList.jsx";
+import GlobalWalletAddressAdd from "../pages/wallet/GlobalWalletAddressAdd.jsx";
+import GlobalWalletAddressEdit from "../pages/wallet/GlobalWalletAddressEdit.jsx"
+import ConfigrrationApiKeyList from "../pages/configration/ConfigrrationAPikeyList.jsx"
+import ConfigrrationApiKeyAdd from "../pages/configration/ConfigrationApiKeyAdd.jsx"
+import ConfigrrationApiKeyEdit from "../pages/configration/ConfigrationApiKeyEdit.jsx"
 
 const AppRouter = () => {
   return (
     <Routes>
-      {/* <Route path="/" element={<Index />} /> */}
+      {/* <Route path="/" element={<Index />} /> general-categoryAdd*/}
       <Route path="/" element={<Index />} />
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
@@ -49,13 +58,30 @@ const AppRouter = () => {
       <Route path="/user/merchant-list" element={<MerchantList />} />
       <Route path="/user/superadmin-list" element={<SuperAdminList />} />
       <Route path="/user/admin-list" element={<AdminList />} />
-  
       <Route path="/user/change-password" element={<ChangePassword />} />
-      <Route path="/category/post-category-list" element={<PostCategoryList />} /> 
-      <Route path="/category/post-categoryAdd" element={<PostCategoryAdd />} /> 
-      <Route path="/category/post-category-edit/:id" element={<PostCategoryEdit />} /> 
-      <Route path="/post/post-list" element={<PostList />} /> 
-      <Route path="/post/post-add" element={<PostAdd />} /> 
+      <Route path="/category/post-category-list" element={<PostCategoryList />} />
+      <Route path="/category/post-categoryAdd" element={<PostCategoryAdd />} />
+      <Route path="/category/post-category-edit/:id" element={<PostCategoryEdit />} />
+      <Route path="/category/general-category-edit/:id" element={<GeneralCategoryEdit />} />
+      <Route path="/category/global-category-list" element={<GeneralCategoryList />} />
+      <Route path="/post/post-list" element={<PostList />} />
+      <Route path="/post/post-add" element={<PostAdd />} />
+      <Route path="/post/post-edit/:id" element={<PostEdit />} />
+      <Route path="/category/general-category-add" element={<GeneralCategoryAdd />} />
+      <Route path="/wallet/global-wallet-address-list" element={<GlobalWalletAddressList />} />
+      <Route path="/wallet/global-wallet-address-add" element={<GlobalWalletAddressAdd />} />
+      <Route path="/configration/config-api-key-list" element={<ConfigrrationApiKeyList />} />
+      <Route path="/configration/config-api-key-add" element={<ConfigrrationApiKeyAdd />} />
+      <Route path="/configration/config-api-key-edit/:id" element={<ConfigrrationApiKeyEdit />} />
+  
+
+
+
+      
+      <Route path="/wallet/global-wallet-edit/:id" element={<GlobalWalletAddressEdit />} />
+
+
+      wallet/general-category-edit
       <Route path="/dashboard" element={<Dashboard />} />
     </Routes>
   );

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Category;
+namespace App\Http\Controllers\Wallet;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -12,6 +12,7 @@ use App\Models\Categorys;
 use App\Category;
 use App\Models\AttributeValues;
 use App\Models\Attribute;
+use App\Models\GlobalWalletAddress;
 use App\Models\MiningCategory;
 use App\Models\MiningHistory;
 use App\Models\Mystore;
@@ -26,7 +27,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use DB;
 
-class CategoryController extends Controller
+class WalletAddressController extends Controller
 {
     protected $userid;
     public function __construct()
@@ -38,23 +39,18 @@ class CategoryController extends Controller
             $this->userid = $user->id;
         }
     }
-    public function index()
-    {
-        $categories = Categorys::with('children.children.children.children.children')->select('name')->where('parent_id', 0)->get();
-        return response()->json($categories);
-    }
 
-    public function postCategorySave(Request $request)
+    public function save(Request $request)
     {
         //dd($request->all());
         $validator = Validator::make(
             $request->all(),
             [
-                'name'      => 'required|unique:categorys,name',
+                'name'      => 'required|unique:global_wallet_address,name',
                 'status'    => 'required',
             ],
             [
-                'name'   => 'Category name is required',
+                'name'   => 'Wallet address is required',
                 'status' => 'Status is required',
             ]
         );
@@ -68,9 +64,9 @@ class CategoryController extends Controller
             'status'                    => !empty($request->status) ? $request->status : "",
         );
         if (empty($request->id)) {
-            PostCategory::create($data);
+            GlobalWalletAddress::create($data);
         } else {
-            PostCategory::where('id', $request->id)->update($data);
+            GlobalWalletAddress::where('id', $request->id)->update($data);
         }
 
         $response = [
@@ -79,68 +75,18 @@ class CategoryController extends Controller
         return response()->json($response);
     }
 
-    public function GeneralCategorySave(Request $request)
+    public function checkWalletInfo(Request $request)
     {
-        //dd($request->all());
-        $validator = Validator::make(
-            $request->all(),
-            [
-                'name'      => 'required|unique:categorys,name',
-                'status'    => 'required',
-            ],
-            [
-                'name'   => 'Category name is required',
-                'status' => 'Status is required',
-            ]
-        );
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-        $slug     = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $request->input('name'))));
-        $data = array(
-            'name'                      => $request->name,
-            'slug'                      => $slug,
-            'status'                    => !empty($request->status) ? $request->status : "",
-        );
-        if (empty($request->id)) {
-            Categorys::create($data);
-        } else {
-            Categorys::where('id', $request->id)->update($data);
-        }
 
-        $response = [
-            'message' => 'Successfully insert',
-        ];
-        return response()->json($response);
-    }
-
-    public function checkPostCategory(Request $request)
-    {
         try {
-            $categoryId = $request->categoryId ?? "";
-            $categories = PostCategory::where('id', $categoryId)->first();
-            return response()->json($categories);
+            $walletiD = $request->walletId ?? "";
+            $walletInfo = GlobalWalletAddress::where('id', $walletiD)->first();
+            return response()->json($walletInfo);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
-
-    public function checkGeneralCategory(Request $request)
-    {
-        try {
-            $categoryId = $request->categoryId ?? "";
-            $categories = Categorys::where('id', $categoryId)->first();
-            return response()->json($categories);
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
-    }
-
-    public function getCategoryListParent(Request $request)
-    {
-        $categories = Categorys::where('status', 1)->get();
-        return response()->json($categories);
-    }
+ 
 
     public function getPostCategorys(Request $request)
     {
@@ -161,46 +107,8 @@ class CategoryController extends Controller
         return response()->json($response, 200);
     }
 
-    public function getInSubCategoryChild($data)
-    {
-        $selectedValues = trim($data);
-        $queries = DB::select("SELECT id,name,parent_id FROM `categorys` WHERE `parent_id` IN ($selectedValues)");
-        $result = [];
-        foreach ($queries as $key => $v) {
-            $result[] = [
-                'value' => $v->id,
-                'label' => $v->name
-            ];
-        }
-        return response()->json($result);
-    }
-    public function searchCategory(Request $request)
-    {
-        $term = $request->input('term');
-        $results = Categorys::where('name', 'like', '%' . $term . '%')
-            ->where('status', 1)
-            // ->orWhere('category', 'like', '%' . $term . '%')
 
-            ->get();
-        $formattedResults = [];
-        foreach ($results as $result) {
-            $path = [];
-            $category = $result;
-            while ($category) {
-                array_unshift($path, $category->name);
-                $category = $category->parent;
-            }
-            $formattedResults[] = [
-                'name' => $result->name,
-                'id' => $result->id,
-                'percentage_amt' => $result->percentage_amt,
-                'category' => implode(' > ', $path)
-            ];
-        }
-        return response()->json($formattedResults);
-    }
-
-    public function GeneralCategoryList(Request $request)
+    public function globalWalletAddressList(Request $request)
     {
 
         //dd($request->all());
@@ -211,15 +119,15 @@ class CategoryController extends Controller
         $searchQuery    = $request->searchQuery;
         $selectedFilter = (int)$request->selectedFilter;
         // dd($selectedFilter);
-        $query = Categorys::orderBy('id', 'desc');
+        $query = GlobalWalletAddress::orderBy('id', 'desc');
 
         if ($searchQuery !== null) {
-            $query->where('categorys.name', 'like', '%' . $searchQuery . '%');
+            $query->where('global_wallet_address.name', 'like', '%' . $searchQuery . '%');
         }
 
         if ($selectedFilter !== null) {
 
-            $query->where('categorys.status', $selectedFilter);
+            $query->where('global_wallet_address.status', $selectedFilter);
         }
         // $query->whereNotIn('users.role_id', [2]);
         $paginator = $query->paginate($pageSize, ['*'], 'page', $page);

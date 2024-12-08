@@ -10,6 +10,7 @@ use Validator;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Order;
+use App\Models\ApiKey;
 use App\Models\Videos;
 use App\Models\Deposit;
 use App\Models\Gallery;
@@ -122,6 +123,17 @@ class UserController extends Controller
         return response()->json($response, 200);
     }
 
+
+    public function getOnlyMerchantList(Request $request)
+    {
+        $data = User::where('status', 1)->where('role_id', 2)->get();
+        $response = [
+            'data' => $data,
+            'message' => 'success'
+        ];
+        return response()->json($response, 200);
+    }
+
     public function getRoleList(Request $request)
     {
 
@@ -167,9 +179,9 @@ class UserController extends Controller
     public function findUserDetails(Request $request)
     {
 
-        $video_id = $request->id;
-        $history  = VideosThunmnail::where('video_id', $video_id)->get();
-        return response()->json($history); // Return the result as JSON
+        $id       = $request->id;
+        $history  = ApiKey::where('id', $id)->first();
+        return response()->json($history, 200); // Return the result as JSON
 
     }
 
@@ -392,52 +404,7 @@ class UserController extends Controller
         return response()->json($response);
     }
 
-    public function assignToUser(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'role_id'    => 'required',
-            'employee_id' => 'required',
-            'name'       => 'required',
-            'phone'      => 'required',
-            'email'      => 'required|email',
-            // 'email' => 'required|email|unique:users',
-            'password' => 'min:2|required_with:password_confirmation|same:password_confirmation',
-            'password_confirmation' => 'min:2'
-        ]);
-        if ($validator->fails()) {
-            return response()->json(['errors' => $validator->errors()], 422);
-        }
-        $data = array(
-            'role_id'       => !empty($request->role_id) ? $request->role_id : "",
-            'employee_id'   => !empty($request->employee_id) ? $request->employee_id : "",
-            'name'          => !empty($request->name) ? $request->name : "",
-            'address'       => !empty($request->address) ? $request->address : "",
-            'phone_number'  => !empty($request->phone) ? $request->phone : "",
-            'email'         => !empty($request->email) ? $request->email : "",
-            'password'      => !empty($request->password) ? Hash::make($request->password) : "",
-            'show_password' => $request->password,
-            'status'        => $request->status,
-            'entry_by'      => $this->userid,
-        );
-        if (!empty($request->file('file'))) {
-            $files = $request->file('file');
-            $fileName = Str::random(20);
-            $ext = strtolower($files->getClientOriginalExtension());
-            $path = $fileName . '.' . $ext;
-            $uploadPath = '/backend/files/';
-            $upload_url = $uploadPath . $path;
-            $files->move(public_path('/backend/files/'), $upload_url);
-            $file_url = $uploadPath . $path;
-            $data['image'] = $file_url;
-        }
 
-        $userId = DB::table('users')->insertGetId($data);
-
-        $response = [
-            'message' => 'Successfully Assign to User. UserID:' . $userId
-        ];
-        return response()->json($response);
-    }
 
     public function changePasswordClient(Request $request)
     {

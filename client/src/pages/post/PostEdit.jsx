@@ -1,18 +1,14 @@
-
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Helmet } from "react-helmet";
 import GuestNavbar from "../../components/Navbar";
-import { Link } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import Footer from "../../components/Footer";
 import LeftSideBarComponent from "../../components/LeftSideBarComponent";
-import EditorComponent from "../../components/EditorComponent";
 import axios from "/config/axiosConfig";
-import { useNavigate } from 'react-router-dom';
 import Swal from "sweetalert2";
+import EditorComponent from "../../components/EditorComponent";
 
-
-
-const PostAdd = () => {
+const PostEdit = () => {
 
     const [errors, setErrors] = useState({});
     const [name, setName] = useState("");
@@ -21,9 +17,8 @@ const PostAdd = () => {
     const [status, setStatus] = useState("");
     const [categoryData, setCategoryData] = useState([]);
     const token = JSON.parse(sessionStorage.getItem("token"));
-    const id = "";
-    //const [description, setNameDescription] = useState("");
-
+    const apiUrl = "/post/getPostrow";
+    const { id } = useParams();
 
     const defaultFetch = async () => {
         try {
@@ -40,6 +35,31 @@ const PostAdd = () => {
             console.error("Error fetching user data:", error);
         }
     };
+
+
+
+    const PostDefaultFetch = async () => {
+        try {
+          const response = await axios.get(apiUrl, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            params: { postId: id },  // or simply { userId } using shorthand
+          });
+          const userData = response.data.data;
+          
+            setName(userData.name || "");
+            setPostCategoryId(userData.post_category_id || "");
+            setDescription(userData.description || "");
+            setStatus(userData.status === 1 || userData.status === 0 ? userData.status : "");
+    
+          //  onChange={setDescription} // The onChange prop will call setDescription to update the state
+            //
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -98,18 +118,20 @@ const PostAdd = () => {
 
     const navigate = useNavigate();
     const handleAddNewClick = () => {
-        navigate('/post/post-list');
+        navigate('/post/role-list');
     };
 
 
     useEffect(() => {
         defaultFetch();
+        PostDefaultFetch();
+
     }, []);
 
     return (
         <>
             <Helmet>
-                <title>Add Post</title>
+                <title>Post Edit</title>
             </Helmet>
 
             <div>
@@ -129,7 +151,7 @@ const PostAdd = () => {
                                             <li className="breadcrumb-item">
                                                 <Link to="/dashboard"><i className="bx bx-home-alt" /></Link>
                                             </li>
-                                            <li className="breadcrumb-item active" aria-current="page">Add New</li>
+                                            <li className="breadcrumb-item active" aria-current="page">Edit</li>
                                         </ol>
                                     </nav>
                                 </div>
@@ -237,4 +259,4 @@ const PostAdd = () => {
     );
 };
 
-export default PostAdd;
+export default PostEdit;

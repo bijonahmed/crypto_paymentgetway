@@ -16,18 +16,7 @@ class Categorys extends Authenticatable
   protected $fillable = [
     'name',
     'slug',
-    'description',
-    'meta_title',
-    'meta_description',
-    'percentage_amt',
-    'meta_keyword',
-    'parent_id',
     'file',
-    'bg_images',
-    'store_images',
-    'language',
-    'keyword',
-    'sort_order',
     'status',
   ];
 

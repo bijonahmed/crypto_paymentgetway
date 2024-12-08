@@ -40,7 +40,7 @@ class PublicController extends Controller
                 'path' => '#',
                 'icon' => 'bx bx-category',
                 'submenu' => [
-                    ['label' => 'Post Category List', 'path' => '/category/post-category-list', 'icon' => 'bx bx-radio-circle'],
+                    ['label' => 'Post Category', 'path' => '/category/post-category-list', 'icon' => 'bx bx-radio-circle'],
                     ['label' => 'Post List', 'path' => '/post/post-list', 'icon' => 'bx bx-radio-circle']
                 ]
             ],
@@ -49,9 +49,10 @@ class PublicController extends Controller
                 'path' => '#',
                 'icon' => 'bx bx-category',
                 'submenu' => [
-                    ['label' => 'Global Category List', 'path' => 'category/list', 'icon' => 'bx bx-radio-circle'],
-                    ['label' => 'Configuration System', 'path' => 'app-emailbox.html', 'icon' => 'bx bx-radio-circle'],
-                    ['label' => 'Wallet Address', 'path' => 'app-chat-box.html', 'icon' => 'bx bx-radio-circle']
+                    ['label' => 'Global Category', 'path' => '/category/global-category-list', 'icon' => 'bx bx-radio-circle'],
+                    ['label' => 'Global Wallet Address', 'path' => '/wallet/global-wallet-address-list', 'icon' => 'bx bx-radio-circle'],
+                    ['label' => 'Confirgration API Key', 'path' => '/configration/config-api-key-list','icon' => 'bx bx-radio-circle'],
+                    ['label' => 'Merchant Request', 'path' => '/configration/config-api-key-list','icon' => 'bx bx-radio-circle']
                 ]
             ]
         ];

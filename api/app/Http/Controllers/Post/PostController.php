@@ -19,6 +19,7 @@ use App\Models\ProductAdditionalImg;
 use App\Models\ProductVarrient;
 use App\Models\AttributeValues;
 use App\Models\Post;
+use App\Models\PostCategory;
 use Illuminate\Support\Str;
 use App\Rules\MatchOldPassword;
 use Illuminate\Support\Facades\Hash;
@@ -83,7 +84,7 @@ class PostController extends Controller
 
     public function save(Request $request)
     {
-       // dd($request->all());
+        // dd($request->all());
         $validator = Validator::make($request->all(), [
             'name'             => 'required',
             'post_category_id' => 'required',
@@ -113,7 +114,13 @@ class PostController extends Controller
             $data['thumnail_img'] = $file_url;
         }
         //Post::create($data);
-        $resdata['post_id'] = Post::insertGetId($data);
+
+        if (empty($request->id)) {
+            $resdata['post_id'] = Post::insertGetId($data);
+        } else {
+            $resdata = Post::find($request->id);
+            $resdata->update($data);
+        }
         return response()->json($resdata);
     }
 
@@ -136,10 +143,15 @@ class PostController extends Controller
         $paginator = $query->paginate($pageSize, ['*'], 'page', $page);
 
         $modifiedCollection = $paginator->getCollection()->map(function ($item) {
+
+            $pCategory  = PostCategory::where('id', $item->post_category_id)->first();
+
             return [
                 'id'            => $item->id,
                 'name'          => substr($item->name, 0, 250),
-                'status'        => $item->status,
+                'postCategory'  => $pCategory->name,
+                'status'        => $item->status == 1 ? 'Active' : "Inactive",
+                'created_at'    => date("Y-M-d", strtotime($item->created_at)),
             ];
         });
 
@@ -152,11 +164,12 @@ class PostController extends Controller
         ], 200);
     }
 
-    public function postrow($id)
+    public function postrow(Request $request)
     {
+        $id = $request->postId;
         $data = Post::where('posts.id', $id)
             ->select('posts.*', 'post_category.name as category_name')
-            ->join('post_category', 'posts.categoryId', '=', 'post_category.id')
+            ->join('post_category', 'posts.post_category_id', '=', 'post_category.id')
             ->first();
         $responseData['data']      = $data;
         $responseData['images']    = !empty($data->thumnail_img) ? url($data->thumnail_img) : "";

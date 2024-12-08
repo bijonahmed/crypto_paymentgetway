@@ -32,7 +32,7 @@ class User extends Authenticatable implements JWTSubject
     'with_password',
     'with_show_password',
     'real_name',
-    'available_balance',
+    'company_name',
     'fg_id',
     'status',
     'phone',
