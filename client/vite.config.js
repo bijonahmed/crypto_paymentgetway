@@ -5,10 +5,6 @@ import compress from 'vite-plugin-compression';
 export default defineConfig({
   plugins: [
     react(),
-    compress({ // Compress assets to reduce bundle size
-      algorithm: 'brotliCompress', // Options: 'gzip', 'brotliCompress'
-      ext: '.br', // Output extension
-    }),
   ],
   css: {
     minify: true, // Minify CSS for production builds

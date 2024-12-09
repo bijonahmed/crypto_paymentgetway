@@ -48,7 +48,6 @@ const AppRouter = () => {
       <Route path="/user-login" element={<UserLogin />} />
       <Route path="/signup" element={<Signup />} />
       <Route path="/forget-password" element={<Forgetpassword />} />
-
       <Route path="/user/profile" element={<MyProfile />} />
       <Route path="/user/role-list" element={<RoleList />} />
       <Route path="/user/role-add" element={<RoleAdd />} />
@@ -73,15 +72,7 @@ const AppRouter = () => {
       <Route path="/configration/config-api-key-list" element={<ConfigrrationApiKeyList />} />
       <Route path="/configration/config-api-key-add" element={<ConfigrrationApiKeyAdd />} />
       <Route path="/configration/config-api-key-edit/:id" element={<ConfigrrationApiKeyEdit />} />
-  
-
-
-
-      
       <Route path="/wallet/global-wallet-edit/:id" element={<GlobalWalletAddressEdit />} />
-
-
-      wallet/general-category-edit
       <Route path="/dashboard" element={<Dashboard />} />
     </Routes>
   );

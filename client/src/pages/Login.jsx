@@ -10,6 +10,8 @@ import Footer from "../components/Footer";
 import { LanguageContext } from "../context/LanguageContext";
 
 const Login = () => {
+
+  const [loading, setLoading] = useState(false);
   const { content } = useContext(LanguageContext);
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
@@ -34,7 +36,7 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setLoading(true);
     const token = JSON.parse(sessionStorage.getItem("token"));
   if (token) {
     sessionStorage.removeItem('token');  // Remove token
@@ -54,6 +56,8 @@ const Login = () => {
           : "Invalid username or password.",
         ...fieldErrors,
       });
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -119,8 +123,9 @@ const Login = () => {
                       </div> */}
                         <div className="col-12">
                           <div className="d-grid">
-                            <button type="submit" className="btn btn-primary">Sign in</button>
+                            <button type="submit" className="btn btn-primary" disabled={loading}>{loading ? "Processing..." : "Sign in"}</button>
                           </div>
+                          
                         </div>
 
                       </form>

@@ -11,7 +11,7 @@ function App() {
 
   useEffect(() => {
     if (!user) {
-      navigate('/login'); // Redirect to the login page if `user` is null or undefined
+      navigate('/'); // Redirect to the login page if `user` is null or undefined
     }
   }, []); // The effect depends on the `user` and `navigate`
 
