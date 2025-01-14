@@ -25,6 +25,9 @@ use App\Models\VideosThunmnail;
 use Illuminate\Http\JsonResponse;
 use PhpParser\Node\Stmt\TryCatch;
 use App\Http\Controllers\Controller;
+use App\Imports\BulkAddressImport;
+use App\Models\BulkAddress;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log; // Add this line
 
@@ -113,6 +116,28 @@ class UserController extends Controller
         return response()->json($response, 200);
     }
 
+    public function deleteWallet(Request $request)
+    {
+
+        // dd($request->all());
+
+        $id       = (int) $request->id;
+        $status   = (int) $request->status;
+        $data     = BulkAddress::where('id', $id)->first();
+        if ($data) {
+            $data->status = $status;
+            $data->entry_by = $this->userid;
+            $data->save();
+        }
+
+        $response = [
+            'data' => $data,
+            'message' => $data ? 'success' : 'record not found or already updated'
+        ];
+
+        return response()->json($response, 200);
+    }
+
     public function getRoles(Request $request)
     {
         $data = Role::where('status', 1)->get();
@@ -133,6 +158,20 @@ class UserController extends Controller
         ];
         return response()->json($response, 200);
     }
+
+
+    public function getBulkAddressMerchant(Request $request)
+    {
+
+        $data = BulkAddress::where('merchant_id', $request->id)->get();
+        $response = [
+            'data' => $data,
+            'message' => 'success'
+        ];
+        return response()->json($response, 200);
+    }
+
+
 
     public function getRoleList(Request $request)
     {
@@ -175,7 +214,15 @@ class UserController extends Controller
             'total_records' => $paginator->total(),
         ], 200);
     }
+    public function findMerchantDetails(Request $request)
+    {
 
+        $id       = $request->id;
+        $chkAPiKey = ApiKey::where('id', $id)->first();
+        $history  = User::where('id', $chkAPiKey->merchant_id)->first();
+        return response()->json($history, 200); // Return the result as JSON
+
+    }
     public function findUserDetails(Request $request)
     {
 
@@ -329,6 +376,29 @@ class UserController extends Controller
             ];
         }
         return response()->json($response);
+    }
+
+    public function uploadExcelbulkAddress(Request $request)
+    {
+
+        //dd($request->all());
+
+        // Validate the file input
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv|max:10240', // Optional: file size validation (10MB)
+        ]);
+
+        // Perform the import directly without using a helper
+        try {
+            // Use the Excel facade to import the data
+            Excel::import(new BulkAddressImport($request->id), $request->file('file'));
+
+            // Return a success response if the import was successful
+            return response()->json(['message' => 'File imported successfully!'], 200);
+        } catch (\Exception $e) {
+            // Return an error response if something goes wrong
+            return response()->json(['message' => 'File import failed', 'error' => $e->getMessage()], 500);
+        }
     }
 
     public function saveUser(Request $request)

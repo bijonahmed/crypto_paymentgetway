@@ -169,6 +169,7 @@ const ConfigrationApiKeyEdit = () => {
                       <div className="col-sm-9">
                         <div className="position-relative">
                           <select
+                          disabled
                             className="form-select"
                             id="input46"
                             value={merchant_id}

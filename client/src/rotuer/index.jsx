@@ -16,6 +16,8 @@ import MyProfile from "../pages/users/MyProfile.jsx";
 import MerchantList from "../pages/users/MerchantList.jsx";
 import RoleList from "../pages/users/RoleList.jsx";
 import RoleAdd from "../pages/users/Addrole.jsx";
+import BulkAddress from "../pages/configration/address/BulkAddress.jsx";
+
 
 import RoleEdit from "../pages/users/EditRole.jsx";
 import UserEdit from "../pages/users/EditUser.jsx";
@@ -72,6 +74,7 @@ const AppRouter = () => {
       <Route path="/configration/config-api-key-list" element={<ConfigrrationApiKeyList />} />
       <Route path="/configration/config-api-key-add" element={<ConfigrrationApiKeyAdd />} />
       <Route path="/configration/config-api-key-edit/:id" element={<ConfigrrationApiKeyEdit />} />
+      <Route path="/configration/address/merchant-address/:id" element={<BulkAddress />} />
       <Route path="/wallet/global-wallet-edit/:id" element={<GlobalWalletAddressEdit />} />
       <Route path="/dashboard" element={<Dashboard />} />
     </Routes>

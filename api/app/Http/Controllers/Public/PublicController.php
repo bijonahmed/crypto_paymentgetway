@@ -5,13 +5,68 @@ namespace App\Http\Controllers\Public;
 use Cart;
 use Carbon\Carbon;
 use App\Models\GamesAll;
-use App\Models\GameType;
+use App\Models\ApiKey;
+use App\Models\BulkAddress;
 use Illuminate\Http\Request;
 use App\Models\GamelistTransate;
 use App\Http\Controllers\Controller;
 
 class PublicController extends Controller
 {
+    
+    
+   public function getwalleteAddress(Request $request)
+    {
+        
+        // Validate incoming request
+        $request->validate([
+            'api_key'  => 'required',
+            'password' => 'required',
+        ]);
+    
+        // Fetch API key and password from request
+        $api_key  = $request->api_key;
+        $password = $request->password;
+    
+        // Query database for matching record
+        $chkData = ApiKey::where('key', $api_key)
+                         ->where('password', $password)
+                         ->first();
+        $merchentId = 3;//!empty($chkData) ? $chkData->merchant_id : "";
+        
+        //echo $merchentId;
+        //exit;       
+                         
+        $chkmerchant = BulkAddress::where('merchant_id', $merchentId)->where('block_status', 0)->inRandomOrder()->first(); // Get a single random row
+       
+      
+       if ($chkmerchant) {
+            $list = [
+                'id'            => (int)$chkmerchant->id,
+                'merchant_id'   => (int)$chkmerchant->merchant_id,
+                'walletAddress' => $chkmerchant->walletAddress,
+            ];
+        } else {
+            $list = []; // Return an empty array if no data is found
+        }
+               
+    
+        // Return response in JSON format
+        if ($chkmerchant) {
+            return response()->json([
+                'status'  => 'success',
+                'message' => 'Wallet address retrieved successfully.',
+                'data'    => $chkmerchant,
+            ], 200); // HTTP status code 200 (OK)
+        }
+    
+        // Return error response if no data found
+        return response()->json([
+            'status'  => 'error',
+            'message' => 'Invalid API key or password.',
+        ], 404); // HTTP status code 404 (Not Found)
+    }
+
 
     public function dynamicMenuLeftSidebar()
     {
@@ -51,60 +106,13 @@ class PublicController extends Controller
                 'submenu' => [
                     ['label' => 'Global Category', 'path' => '/category/global-category-list', 'icon' => 'bx bx-radio-circle'],
                     ['label' => 'Global Wallet Address', 'path' => '/wallet/global-wallet-address-list', 'icon' => 'bx bx-radio-circle'],
-                    ['label' => 'Confirgration API Key', 'path' => '/configration/config-api-key-list','icon' => 'bx bx-radio-circle'],
-                    ['label' => 'Merchant Request', 'path' => '/configration/config-api-key-list','icon' => 'bx bx-radio-circle']
+                    ['label' => 'Confirgration API Key', 'path' => '/configration/config-api-key-list', 'icon' => 'bx bx-radio-circle'],
+                    ['label' => 'Merchant Request', 'path' => '/configration/config-api-key-list', 'icon' => 'bx bx-radio-circle']
                 ]
             ]
         ];
 
         return response()->json($menu);
     }
-
-    public function filterGames(Request $request)
-    {
-
-        $search         = $request->input('search', '');
-        $platformId     = $request->input('platformId', '');
-        $gameTypeId     = $request->input('gameTypeId', '');
-        $gamesQuery     = GamesAll::query();
-        // Apply search filter
-        if ($search) {
-            $gamesQuery->where('name', 'like', '%' . $search . '%');
-        }
-        // Apply platform filter
-        if ($platformId) {
-            $gamesQuery->where('platform_id', $platformId);
-        }
-
-        // Apply game type filter
-        if ($gameTypeId) {
-            $gamesQuery->where('gametype_id', $gameTypeId);
-        }
-        // Get the filtered games
-        $allGames = $gamesQuery->get();
-
-        $dataList = [];
-        foreach ($allGames as $v) {
-            $chkGameTrans = GamelistTransate::where('gameid', $v->gameid)->first();
-            $dataList[] = [
-                'id'            => $v->id,
-                'name'          => $v->name,
-                'translate_name' => !empty($chkGameTrans) ? $chkGameTrans->name : "",
-                'slug'          => $v->slug,
-                'game_type'     => $v->game_type,
-                'gameid'        => $v->gameid,
-                'imagepath'     => !empty($v->game_images) ? url($v->game_images) : "", // Path for the image
-                'status'        => $v->status,
-            ];
-        }
-        return response()->json([
-            'gameTypeName' => "",
-            'success' => true,
-            'message' => 'Games fetched successfully.',
-            'data'    => $dataList,
-        ], 200);
-        // Return filtered games as a JSON response
-        //return response()->json($games);
-    }
-
+ 
 }

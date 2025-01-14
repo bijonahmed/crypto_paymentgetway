@@ -17,7 +17,10 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Rules\MatchOldPassword;
 use App\Http\Controllers\Controller;
+use App\Models\BulkAddress;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
+
 
 class SettingController extends Controller
 {
@@ -150,6 +153,7 @@ class SettingController extends Controller
 
         $modifiedCollection = $paginator->getCollection()->map(function ($item) {
             $findMrchent    =  User::where('id', $item->merchant_id)->first();
+            $countBulkAdd   =  BulkAddress::where('merchant_id',$item->id)->where('status',1)->get();
 
             return [
                 'id'            => $item->id,
@@ -160,6 +164,7 @@ class SettingController extends Controller
                 'created_at'    => date("Y-M-d", strtotime($item->created_at)),
                 'updated_at'    => date("Y-M-d H:i:s", strtotime($item->updated_at)),
                 'status'        => $item->status == 1 ? 'Open' : 'Close',
+                'countBulkAdd'  => count($countBulkAdd),
             ];
         });
         // Return the modified collection along with pagination metadata
@@ -171,6 +176,46 @@ class SettingController extends Controller
         ], 200);
     }
 
+
+
+    public function saveMerchantBulkAddress(Request $request)
+    {
+
+        //dd($request->all());
+
+        $validator = Validator::make($request->all(), [
+            'walletAddress' => [
+                'required',
+                Rule::unique('bulk_address')->where(function ($query) use ($request) {
+                    return $query->where('merchant_id', $request->id);
+                }),
+            ],
+            'id' => 'required',
+            'status' => 'required',
+        ], [
+            'walletAddress.required' => 'The wallet address is required.',
+            'id.required'            => 'The merchant is required.',
+            'status.required'        => 'The status field is required.',
+            'walletAddress.unique'   => 'The wallet address must be unique under the same merchant.',
+        ]);
+        
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+        
+        // If validation passes, insert the record
+        $data = [
+            'merchant_id'   => $request->id,
+            'walletAddress' => $request->walletAddress,
+            'status'        => $request->status,
+        ];
+        
+        // Insert data and get the ID
+        $insertedId = BulkAddress::insertGetId($data);
+        $resdata['id']   = "Id {$insertedId} Wallet address added successfully.";
+        return response()->json($resdata);
+ 
+    }
 
 
 

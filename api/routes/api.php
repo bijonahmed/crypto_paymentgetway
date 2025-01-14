@@ -10,6 +10,9 @@ use App\Http\Controllers\Post\PostController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Controllers\Public\PublicController;
 use App\Http\Controllers\Setting\SettingController;
+use App\Http\Controllers\Deposits\DepositController;
+
+
 use App\Http\Controllers\UnauthenticatedController;
 use App\Http\Controllers\Category\CategoryController;
 use App\Http\Controllers\Wallet\WalletAddressController;
@@ -56,6 +59,7 @@ Route::group([
 
     Route::get('/dynamicLeftSidebarmenu', [PublicController::class, 'dynamicMenuLeftSidebar']);
     Route::get('/filterGames', [PublicController::class, 'filterGames']);
+    Route::post('/getMerchentRequest', [PublicController::class, 'getMerchentRequest']);
 });
 
 Route::middleware(['auth:api', CheckUserStatus::class])->group(function () {
@@ -63,10 +67,13 @@ Route::middleware(['auth:api', CheckUserStatus::class])->group(function () {
     Route::group([
         'prefix' => 'user'
     ], function () {
+        Route::get('getBulkAddressMerchant', [UserController::class, 'getBulkAddressMerchant']);
         Route::get('getRoleList', [UserController::class, 'getRoleList']);
         Route::get('getRoles', [UserController::class, 'getRoles']);
         Route::get('roleCheck', [UserController::class, 'roleCheck']);
         Route::post('saveRole', [UserController::class, 'saveRole']);
+        Route::post('upload-excel-bulk-address', [UserController::class, 'uploadExcelbulkAddress']);
+        Route::get('deleteWallet', [UserController::class, 'deleteWallet']);
         Route::post('changePassword', [UserController::class, 'changePassword']);
         Route::post('changePasswordClient', [UserController::class, 'changePasswordClient']);
         Route::post('updateUserProPass', [UserController::class, 'updateUserProPass']);
@@ -75,6 +82,7 @@ Route::middleware(['auth:api', CheckUserStatus::class])->group(function () {
         Route::post('updateUserProfileImg', [UserController::class, 'updateUserProfileImg']);
         Route::get('getOnlyMerchantList', [UserController::class, 'getOnlyMerchantList']);
         Route::get('findUserDetails', [UserController::class, 'findUserDetails']);
+        Route::get('findMerchantDetails', [UserController::class, 'findMerchantDetails']);
         Route::get('checkCurrentUser', [UserController::class, 'checkCurrentUser']);
         Route::get('getUserRow', [UserController::class, 'editUserId']);
         Route::get('allUsers', [UserController::class, 'allUsers']);
@@ -119,16 +127,30 @@ Route::middleware(['auth:api', CheckUserStatus::class])->group(function () {
         Route::post('save', [WalletAddressController::class, 'save']);
         Route::get('checkWalletInfo', [WalletAddressController::class, 'checkWalletInfo']);
     });
-
+    
+     
     Route::group([
         'prefix' => 'setting'
     ], function () {
         Route::post('insertLanguageAdd', [SettingController::class, 'insertLanguageAdd']);
         Route::post('saveAPIKey', [SettingController::class, 'saveAPIKey']);
+        Route::post('saveMerchantBulkAddress', [SettingController::class, 'saveMerchantBulkAddress']);
         Route::get('searchByConfigrationApiKey', [SettingController::class, 'searchByConfigrationApiKey']);
         Route::get('settingrowSystem', [SettingController::class, 'settingrow']);
         Route::get('getLanguageList', [SettingController::class, 'getLanguageList']);
         Route::get('getLanguageActiveList', [SettingController::class, 'getLanguageActiveList']);
         Route::get('languagerow/{id}', [SettingController::class, 'chkLanguagerow']);
     });
+    
+     Route::group([
+        'prefix' => 'address'
+    ], function () {
+        Route::get('getwalleteAddress', [PublicController::class, 'getwalleteAddress']);
+      
+    });
+    
+    
+    
+    
+    
 });

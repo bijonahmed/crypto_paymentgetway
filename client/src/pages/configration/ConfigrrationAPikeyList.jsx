@@ -18,6 +18,7 @@ const ConfigrrationWalletList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [searchMerchant, setMerchant] = useState("");
+  const [merchantId, setMerchantId] = useState("");
 
   const [totalPages, setTotalPages] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -117,6 +118,14 @@ const ConfigrrationWalletList = () => {
   const handleEdit = (id) => {
     navigate(`/configration/config-api-key-edit/${id}`);
   };
+
+ const makeBulkAddress = (id) => {
+  setMerchantId(id);
+  navigate(`/configration/address/merchant-address/${id}`);
+   
+  };
+
+  
   // Correctly closed useEffect hook
   useEffect(() => {
     fetchData();
@@ -238,6 +247,7 @@ const ConfigrrationWalletList = () => {
                         </div>
                       </div>
 
+                  
                       {loading ? (
                         <div className="d-flex justify-content-center mt-3">
                           <div className="spinner-border" role="status">
@@ -271,19 +281,23 @@ const ConfigrrationWalletList = () => {
                                 <th className="text-center">Status</th>
                                 <th className="text-center">Created</th>
                                 <th className="text-center">Action</th>
+                                <th className="text-center">Wallet</th>
                               </tr>
                             </thead>
                             <tbody>
                               {data.length > 0 ? (
                                 data.map((item) => (
                                   <tr key={item.id}>
-                                    <td>{item.company_name}({item.name})</td>
-                                    <td>{item.key}</td>
-                                    <td>{item.password}</td>
-                                    <td className="text-center">{item.status}</td>
-                                    <td className="text-center">{item.created_at}</td>
-                                    <td className="text-center"><a href="#" onClick={() => handleEdit(item.id)}><i className="lni lni-pencil-alt"></i></a></td>
-
+                                    <td><small>{item.company_name}({item.name})</small></td>
+                                    <td><small>{item.key}</small></td>
+                                    <td><small>{item.password}</small></td>
+                                    <td className="text-center"><small>{item.status}</small></td>
+                                    <td className="text-center"><small>{item.created_at}</small></td>
+                                    <td className="text-center"><a href="#" onClick={() => handleEdit(item.id)}><small><i className="lni lni-pencil-alt"></i>&nbsp;Edit</small></a>
+                                    </td>
+                                    <td className="text-center" onClick={() => makeBulkAddress(item.id)}><small><button className="btn-primary btn-sm"><i className="fa-solid fa-circle-check"></i></button><br/>&nbsp;Create wallet ({item.countBulkAdd})</small>
+                                    </td>
+                                    
                                   </tr>
                                 ))
                               ) : (
@@ -299,6 +313,8 @@ const ConfigrrationWalletList = () => {
                           </table>
                         </div>
                       )}
+
+                    
 
                       <div className="d-flex justify-content-center mt-3 gap-1">
                         <Pagination
