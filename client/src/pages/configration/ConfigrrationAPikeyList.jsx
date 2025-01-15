@@ -295,7 +295,7 @@ const ConfigrrationWalletList = () => {
                                     <td className="text-center"><small>{item.created_at}</small></td>
                                     <td className="text-center"><a href="#" onClick={() => handleEdit(item.id)}><small><i className="lni lni-pencil-alt"></i>&nbsp;Edit</small></a>
                                     </td>
-                                    <td className="text-center" onClick={() => makeBulkAddress(item.id)}><small><button className="btn-primary btn-sm"><i className="fa-solid fa-circle-check"></i></button><br/>&nbsp;Create wallet ({item.countBulkAdd})</small>
+                                    <td className="text-center" onClick={() => makeBulkAddress(item.merchant_id)}><small><button className="btn-primary btn-sm"><i className="fa-solid fa-circle-check"></i></button><br/>&nbsp;Create wallet ({item.countBulkAdd})</small>
                                     </td>
                                     
                                   </tr>

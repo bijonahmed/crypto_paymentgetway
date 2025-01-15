@@ -146,11 +146,9 @@ Route::middleware(['auth:api', CheckUserStatus::class])->group(function () {
         'prefix' => 'address'
     ], function () {
         Route::get('getwalleteAddress', [PublicController::class, 'getwalleteAddress']);
+        Route::post('depositRequest', [PublicController::class, 'depositRequest']);
+        Route::get('checkMerchentDetails', [PublicController::class, 'checkMerchentDetails']);
       
     });
-    
-    
-    
-    
-    
+
 });

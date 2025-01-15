@@ -4,20 +4,76 @@ namespace App\Http\Controllers\Public;
 
 use Cart;
 use Carbon\Carbon;
-use App\Models\GamesAll;
+use App\Models\Deposit;
 use App\Models\ApiKey;
 use App\Models\BulkAddress;
 use Illuminate\Http\Request;
 use App\Models\GamelistTransate;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Log;
 
 class PublicController extends Controller
 {
     
     
+    public function depositRequest(Request $request)
+{
+     
+    // Check if the incoming request is JSON
+    if ($request->isJson()) {
+        
+        
+        //dd($request->all());
+        
+        $validatedData = $request->validate([
+            'depositID'  => 'required',
+            'user_id'    => 'required|integer',
+            'username'   => 'required',
+            'merchant_id'=> 'required|integer',
+            'amount'     => 'required|numeric',
+            'to_crypto_wallet_address' => 'required|string',
+            'status'     => 'required|integer',
+        ]);
+        
+        $depositId = $validatedData['depositID'];
+        
+        $checkDeposit = Deposit::where('depositID',$depositId)->first();
+        if(empty($checkDeposit)){
+            
+        // Insert the data into the Deposit model
+        $deposit = Deposit::create([
+            'depositID'             => $validatedData['depositID'],
+            'user_id'               => $validatedData['user_id'],
+            'username'              => $validatedData['username'],
+            'merchant_id'           => $validatedData['merchant_id'],
+            'deposit_amount'        => $validatedData['amount'],
+            'status'                => $validatedData['status'],
+            'to_crypto_wallet_address' => $validatedData['to_crypto_wallet_address'],
+        ]);
+
+        // Respond with a success message
+        return response()->json([
+            'message' => 'Deposit received and inserted successfully',
+            'deposit' => $deposit
+        ], 200);
+            
+            
+        }
+        
+       
+    } else {
+        // Log the error if it's not a JSON request
+        Log::warning('Non-JSON request received.');
+
+        // Respond with an error if the request is not JSON
+        return response()->json(['message' => 'Request must be JSON'], 400);
+    }
+}
+    
    public function getwalleteAddress(Request $request)
     {
-        
+       // echo "=====";
+        //dd($request->all()); 
         // Validate incoming request
         $request->validate([
             'api_key'  => 'required',
@@ -32,10 +88,10 @@ class PublicController extends Controller
         $chkData = ApiKey::where('key', $api_key)
                          ->where('password', $password)
                          ->first();
-        $merchentId = 3;//!empty($chkData) ? $chkData->merchant_id : "";
+        $merchentId = !empty($chkData) ? $chkData->merchant_id : "";
         
         //echo $merchentId;
-        //exit;       
+       // exit;       
                          
         $chkmerchant = BulkAddress::where('merchant_id', $merchentId)->where('block_status', 0)->inRandomOrder()->first(); // Get a single random row
        
@@ -66,6 +122,41 @@ class PublicController extends Controller
             'message' => 'Invalid API key or password.',
         ], 404); // HTTP status code 404 (Not Found)
     }
+    
+    
+    public function checkMerchentDetails(Request $request)
+    {
+        
+        $request->validate([
+            'api_key'  => 'required',
+            'password' => 'required',
+        ]);
+    
+        
+        $api_key  = $request->api_key;
+        $password = $request->password;
+    
+        // Query database for matching record
+        $chkData = ApiKey::where('key', $api_key)
+                         ->select('merchant_id')
+                         ->where('password', $password)
+                         ->first();
+                         
+          if ($chkData) {
+            return response()->json([
+                'status'  => 'success',
+                'message' => 'Merchent information retrieved successfully.',
+                'data'    => $chkData,
+            ], 200); // HTTP status code 200 (OK)
+        }
+    
+        return response()->json([
+            'status'  => 'error',
+            'message' => 'Invalid API key or password.',
+        ], 404); // HTTP status code 404 (Not Found)
+    }
+    
+    
 
 
     public function dynamicMenuLeftSidebar()

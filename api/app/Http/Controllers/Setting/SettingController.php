@@ -153,10 +153,11 @@ class SettingController extends Controller
 
         $modifiedCollection = $paginator->getCollection()->map(function ($item) {
             $findMrchent    =  User::where('id', $item->merchant_id)->first();
-            $countBulkAdd   =  BulkAddress::where('merchant_id',$item->id)->where('status',1)->get();
+            $countBulkAdd   =  BulkAddress::where('merchant_id',$item->merchant_id)->where('status',1)->get();
 
             return [
                 'id'            => $item->id,
+                'merchant_id'   => $item->merchant_id,
                 'company_name'  => $findMrchent->company_name ?? "",
                 'name'          => $findMrchent->name ?? "",
                 'key'           => $item->key ?? "",

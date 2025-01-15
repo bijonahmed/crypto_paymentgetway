@@ -13,12 +13,13 @@ use DB;
 class Deposit extends Authenticatable
 {
   use HasApiTokens, HasFactory, Notifiable;
-  public $table = "deposit";
+  public $table = "deposit_request";
 
   protected $fillable = [
     'depositID',
     'trxId',
     'depscription',
+    'merchant_id',
     'user_id',
     'deposit_amount',
     'receivable_amount',

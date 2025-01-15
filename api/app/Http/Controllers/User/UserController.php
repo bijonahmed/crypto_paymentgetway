@@ -152,6 +152,7 @@ class UserController extends Controller
     public function getOnlyMerchantList(Request $request)
     {
         $data = User::where('status', 1)->where('role_id', 2)->get();
+      
         $response = [
             'data' => $data,
             'message' => 'success'
@@ -218,8 +219,7 @@ class UserController extends Controller
     {
 
         $id       = $request->id;
-        $chkAPiKey = ApiKey::where('id', $id)->first();
-        $history  = User::where('id', $chkAPiKey->merchant_id)->first();
+        $history  = User::where('id', $id)->first();
         return response()->json($history, 200); // Return the result as JSON
 
     }
@@ -228,6 +228,7 @@ class UserController extends Controller
 
         $id       = $request->id;
         $history  = ApiKey::where('id', $id)->first();
+       
         return response()->json($history, 200); // Return the result as JSON
 
     }
