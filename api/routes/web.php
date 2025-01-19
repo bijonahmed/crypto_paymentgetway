@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Public\PublicController;
+use App\Http\Controllers\Public\ApiDepositRequest;
 use App\Http\Controllers\Public\PublicOrderStatusUpdate;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\User\UserController;
@@ -24,17 +25,9 @@ Route::get('/clear-cache', function () {
 */
 //Route::get('/success', [PaymentController::class, 'success'])->withoutMiddleware('auth');
 
-Route::get('/success', 'App\Http\Controllers\Payment\PaypalController@success')->name('success')->withoutMiddleware('auth:api');
-Route::get('/cancel', 'App\Http\Controllers\Payment\PaypalController@cancel')->name('cancel')->withoutMiddleware('auth:api');
-
-
-Route::get('/auth/google', 'Auth\LoginController@redirectToGoogle');
-Route::get('/auth/google/callback', 'Auth\LoginController@handleGoogleCallback');
-
-
-
-Route::get('showProfileData', [UserController::class, 'me']);
-Route::get('activate-account', [PublicController::class, 'activationAccount']);
+ 
+ 
+Route::get('checkdepositRequest', [ApiDepositRequest::class, 'checkdepositRequest']);
 
 Route::get('/', function () {
     return view('welcome');

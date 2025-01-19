@@ -21,6 +21,7 @@ class Deposit extends Authenticatable
     'depscription',
     'merchant_id',
     'user_id',
+    'username',
     'deposit_amount',
     'receivable_amount',
     'payment_method',

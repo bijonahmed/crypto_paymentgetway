@@ -18,26 +18,25 @@ class PublicController extends Controller
     
     public function depositRequest(Request $request)
 {
-     
+        
     // Check if the incoming request is JSON
     if ($request->isJson()) {
-        
-        
-        //dd($request->all());
-        
+           Log::info('Received DEPOSIT JSON request', ['request_data' => $request->all()]);
         $validatedData = $request->validate([
             'depositID'  => 'required',
             'user_id'    => 'required|integer',
             'username'   => 'required',
             'merchant_id'=> 'required|integer',
             'amount'     => 'required|numeric',
-            'to_crypto_wallet_address' => 'required|string',
+            'to_crypto_wallet_address' => 'required',
             'status'     => 'required|integer',
         ]);
         
-        $depositId = $validatedData['depositID'];
         
+         
+        $depositId = $validatedData['depositID'];
         $checkDeposit = Deposit::where('depositID',$depositId)->first();
+        
         if(empty($checkDeposit)){
             
         // Insert the data into the Deposit model
@@ -48,8 +47,21 @@ class PublicController extends Controller
             'merchant_id'           => $validatedData['merchant_id'],
             'deposit_amount'        => $validatedData['amount'],
             'status'                => $validatedData['status'],
-            'to_crypto_wallet_address' => $validatedData['to_crypto_wallet_address'],
+            'to_crypto_wallet_address' => $request->to_crypto_wallet_address,
         ]);
+        // Log::info('Received DEPOSIT AFTER request', ['request_data' => $deposit]);
+         
+         
+        
+        $to_crypto_wallet_address = $validatedData['to_crypto_wallet_address'] ;
+        $checkWalletAddreess      = BulkAddress::where('walletAddress',$to_crypto_wallet_address)->first();
+        
+        if ($checkWalletAddreess) {
+            // Log::info('Address found, updating block_status', ['address' => $checkWalletAddreess->to_crypto_wallet_address]);
+            // Update the block_status to 1
+            $checkWalletAddreess->block_status = 1;
+            $checkWalletAddreess->save(); // Save the changes to the database
+        }
 
         // Respond with a success message
         return response()->json([
@@ -64,7 +76,6 @@ class PublicController extends Controller
     } else {
         // Log the error if it's not a JSON request
         Log::warning('Non-JSON request received.');
-
         // Respond with an error if the request is not JSON
         return response()->json(['message' => 'Request must be JSON'], 400);
     }
@@ -72,9 +83,7 @@ class PublicController extends Controller
     
    public function getwalleteAddress(Request $request)
     {
-       // echo "=====";
-        //dd($request->all()); 
-        // Validate incoming request
+      
         $request->validate([
             'api_key'  => 'required',
             'password' => 'required',
@@ -89,9 +98,7 @@ class PublicController extends Controller
                          ->where('password', $password)
                          ->first();
         $merchentId = !empty($chkData) ? $chkData->merchant_id : "";
-        
-        //echo $merchentId;
-       // exit;       
+          
                          
         $chkmerchant = BulkAddress::where('merchant_id', $merchentId)->where('block_status', 0)->inRandomOrder()->first(); // Get a single random row
        
