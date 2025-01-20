@@ -7,12 +7,16 @@ import LeftSideBarComponent from "../../components/LeftSideBarComponent";
 import axios from "/config/axiosConfig";
 import Swal from "sweetalert2";
 
-const ConfigrationApiKeyEdit = () => {
+const StatusEdit = () => {
 
   const [merchantdata, setMerchantData] = useState([]); // Populate this with actual data
   const [errors, setErrors] = useState({});
   const [merchant_id, setMerchantId] = useState("");
-  const [status, setStatus] = useState(1);
+  const [depositId, setDepositID] = useState("");
+  const [primaryId, setPrimaryId] = useState("");
+  const [depositAmt, setDepositAmount] = useState("");
+  const [recivAmt, setReceivableAmt] = useState("");
+  const [status, setStatus] = useState("");
   const [callback_domain, setcallback_domain] = useState("");
   const { id } = useParams();
 
@@ -38,7 +42,7 @@ const ConfigrationApiKeyEdit = () => {
   };
   const defaultFetch = async () => {
     try {
-      const response = await axios.get(`/user/findUserDetails`, {
+      const response = await axios.get(`/deposit/depositrowCheck`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -47,8 +51,11 @@ const ConfigrationApiKeyEdit = () => {
       const userData = response.data;
       //console.log("API response data:", userData.name); // Debugging: Check API response
       setMerchantId(userData.merchant_id || "");
-      setcallback_domain(userData.callback_domain || "");
-      setStatus(userData.status === 1 || userData.status === 0 ? userData.status : "");
+      setDepositID(userData.depositID || "");
+      setPrimaryId(userData.id || "");
+      setDepositAmount(userData.deposit_amount || "");
+      setReceivableAmt(userData.receivable_amount || "");
+      setStatus(userData.status);
 
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -73,11 +80,9 @@ const ConfigrationApiKeyEdit = () => {
         id,
         merchant_id,
         status,
-        callback_domain
-
       };
 
-      const response = await axios.post("/setting/saveAPIKey", formData, {
+      const response = await axios.post("/deposit/updateDepositStatus", formData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
@@ -104,7 +109,7 @@ const ConfigrationApiKeyEdit = () => {
       setStatus("");
       setErrors({});
       //console.log(response.data.message);
-      navigate("/configration/config-api-key-list");
+      navigate("/report/deposit-report");
     } catch (error) {
       if (error.response && error.response.status === 422) {
         Swal.fire({
@@ -124,7 +129,7 @@ const ConfigrationApiKeyEdit = () => {
 
   const navigate = useNavigate();
   const handleAddNewClick = () => {
-    navigate('/configration/config-api-key-list');
+    navigate('/report/deposit-report');
   };
 
   useEffect(() => {
@@ -136,7 +141,7 @@ const ConfigrationApiKeyEdit = () => {
   return (
     <>
       <Helmet>
-        <title>Edit Merchant </title>
+        <title>Status Update </title>
       </Helmet>
 
       <div>
@@ -149,14 +154,14 @@ const ConfigrationApiKeyEdit = () => {
           <div className="page-wrapper">
             <div className="page-content">
               <div className="page-breadcrumb d-none d-sm-flex align-items-center mb-3">
-                <div className="breadcrumb-title pe-3">Merchant</div>
+                <div className="breadcrumb-title pe-3">Status</div>
                 <div className="ps-3">
                   <nav aria-label="breadcrumb">
                     <ol className="breadcrumb mb-0 p-0">
                       <li className="breadcrumb-item">
                         <Link to="/dashboard"><i className="bx bx-home-alt" /></Link>
                       </li>
-                      <li className="breadcrumb-item active" aria-current="page">Edit</li>
+                      <li className="breadcrumb-item active" aria-current="page">Update</li>
                     </ol>
                   </nav>
                 </div>
@@ -194,23 +199,7 @@ const ConfigrationApiKeyEdit = () => {
                     </div>
 
 
-                    <div className="row mb-3">
-                      <label htmlFor="input46" className="col-sm-3 col-form-label">Callback Domain</label>
-                      <div className="col-sm-9">
-                      <input
-                          type="text"
-                          className="form-control me-2"
-                          value={callback_domain}
-                          onChange={handlecallback_domain}
-                        />
-                       {errors.callback_domain && (
-                          <div style={{ color: "red" }}>
-                            {errors.callback_domain}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
+                 
                     <div className="row mb-3">
                       <label htmlFor="input46" className="col-sm-3 col-form-label">Status</label>
                       <div className="col-sm-9">
@@ -220,8 +209,9 @@ const ConfigrationApiKeyEdit = () => {
                           value={status}
                           onChange={handleConfigStatus}>
                           <option value="">Select Status</option>
+                          <option value={0}>Pending</option>
                           <option value={1}>Active</option>
-                          <option value={0}>Inactive</option>
+                          <option value={2}>Reject</option>
                         </select>
                         {errors.status && (<div style={{ color: "red" }}>{errors.status[0]}</div>)}
                       </div>
@@ -254,4 +244,4 @@ const ConfigrationApiKeyEdit = () => {
   );
 };
 
-export default ConfigrationApiKeyEdit;
+export default StatusEdit;

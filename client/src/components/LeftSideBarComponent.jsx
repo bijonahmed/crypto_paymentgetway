@@ -39,7 +39,7 @@ const LeftSideBarComponent = () => {
           <img src="/assets/images/avatars/futuregenit-logo.png" className="logo-icon" />
         </div>
         <div>
-          <h4 className="logo-text" style={{ fontSize: '15px' }}>Payment Getway</h4>
+          <h4 className="logo-text" style={{ fontSize: '17px' }}><b>FG Gateway</b></h4>
         </div>
         <div className="toggle-icon ms-auto"><i className="bx bx-arrow-back" />
         </div>

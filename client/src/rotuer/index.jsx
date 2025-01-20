@@ -17,6 +17,9 @@ import MerchantList from "../pages/users/MerchantList.jsx";
 import RoleList from "../pages/users/RoleList.jsx";
 import RoleAdd from "../pages/users/Addrole.jsx";
 import BulkAddress from "../pages/configration/address/BulkAddress.jsx";
+import DepositReport from "../pages/report/DepositReport.jsx";
+
+
 
 
 import RoleEdit from "../pages/users/EditRole.jsx";
@@ -36,9 +39,11 @@ import GeneralCategoryEdit from "../pages/category/GeneralCategoryEdit.jsx";
 import GlobalWalletAddressList from "../pages/wallet/GlobalWalletAddressList.jsx";
 import GlobalWalletAddressAdd from "../pages/wallet/GlobalWalletAddressAdd.jsx";
 import GlobalWalletAddressEdit from "../pages/wallet/GlobalWalletAddressEdit.jsx"
-import ConfigrrationApiKeyList from "../pages/configration/ConfigrrationAPikeyList.jsx"
-import ConfigrrationApiKeyAdd from "../pages/configration/ConfigrationApiKeyAdd.jsx"
-import ConfigrrationApiKeyEdit from "../pages/configration/ConfigrationApiKeyEdit.jsx"
+import ConfigrrationApiKeyList from "../pages/configration/ConfigrrationAPikeyList.jsx";
+import ConfigrrationApiKeyAdd from "../pages/configration/ConfigrationApiKeyAdd.jsx";
+import ConfigrrationApiKeyEdit from "../pages/configration/ConfigrationApiKeyEdit.jsx";
+import StatusEdit from "../pages/report/StatusEdit.jsx";
+import CheckTronScanAPI from "../pages/report/CheckTronScanAPI.jsx";
 
 const AppRouter = () => {
   return (
@@ -59,11 +64,13 @@ const AppRouter = () => {
       <Route path="/user/merchant-list" element={<MerchantList />} />
       <Route path="/user/superadmin-list" element={<SuperAdminList />} />
       <Route path="/user/admin-list" element={<AdminList />} />
+      <Route path="/report/deposit-report" element={<DepositReport />} />
       <Route path="/user/change-password" element={<ChangePassword />} />
       <Route path="/category/post-category-list" element={<PostCategoryList />} />
       <Route path="/category/post-categoryAdd" element={<PostCategoryAdd />} />
       <Route path="/category/post-category-edit/:id" element={<PostCategoryEdit />} />
       <Route path="/category/general-category-edit/:id" element={<GeneralCategoryEdit />} />
+      <Route path="/report/status-edit/:id" element={<StatusEdit />} />
       <Route path="/category/global-category-list" element={<GeneralCategoryList />} />
       <Route path="/post/post-list" element={<PostList />} />
       <Route path="/post/post-add" element={<PostAdd />} />
@@ -76,6 +83,7 @@ const AppRouter = () => {
       <Route path="/configration/config-api-key-edit/:id" element={<ConfigrrationApiKeyEdit />} />
       <Route path="/configration/address/merchant-address/:id" element={<BulkAddress />} />
       <Route path="/wallet/global-wallet-edit/:id" element={<GlobalWalletAddressEdit />} />
+      <Route path="/report/tronscan-api" element={<CheckTronScanAPI />} />
       <Route path="/dashboard" element={<Dashboard />} />
     </Routes>
   );

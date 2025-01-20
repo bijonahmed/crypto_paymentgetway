@@ -3,9 +3,7 @@ import '../assets/Loading.css';
 
 const Loader = () => {
   return (
-    <div className="loader-container">
-      <div className="loader"></div>
-    </div>
+    <div className="loader"></div>
   );
 };
 

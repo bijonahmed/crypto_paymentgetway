@@ -153,7 +153,7 @@ class SettingController extends Controller
 
         $modifiedCollection = $paginator->getCollection()->map(function ($item) {
             $findMrchent    =  User::where('id', $item->merchant_id)->first();
-            $countBulkAdd   =  BulkAddress::where('merchant_id',$item->merchant_id)->where('status',1)->get();
+            $countBulkAdd   =  BulkAddress::where('merchant_id', $item->merchant_id)->where('status', 1)->get();
 
             return [
                 'id'            => $item->id,
@@ -161,6 +161,7 @@ class SettingController extends Controller
                 'company_name'  => $findMrchent->company_name ?? "",
                 'name'          => $findMrchent->name ?? "",
                 'key'           => $item->key ?? "",
+                'callback_domain' => $item->callback_domain ?? "",
                 'password'      => $item->password ?? "",
                 'created_at'    => date("Y-M-d", strtotime($item->created_at)),
                 'updated_at'    => date("Y-M-d H:i:s", strtotime($item->updated_at)),
@@ -199,23 +200,22 @@ class SettingController extends Controller
             'status.required'        => 'The status field is required.',
             'walletAddress.unique'   => 'The wallet address must be unique under the same merchant.',
         ]);
-        
+
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
         }
-        
+
         // If validation passes, insert the record
         $data = [
             'merchant_id'   => $request->id,
             'walletAddress' => $request->walletAddress,
             'status'        => $request->status,
         ];
-        
+
         // Insert data and get the ID
         $insertedId = BulkAddress::insertGetId($data);
         $resdata['id']   = "Id {$insertedId} Wallet address added successfully.";
         return response()->json($resdata);
- 
     }
 
 
@@ -223,14 +223,17 @@ class SettingController extends Controller
     public function saveAPIKey(Request $request)
     {
 
+
         if (empty($request->id)) {
             $validator = Validator::make($request->all(), [
                 'merchant_id' => 'required|unique:api_key,merchant_id',
+                'callback_domain' => 'required|url',
                 'key'         => 'required',
                 'password'    => 'required',
                 'status'      => 'required',
             ], [
                 'merchant_id.required' => 'The merchant is required.',
+                'callback_domain.required' => 'The callback domain is required.',
                 'key.required'         => 'The API key is required.',
                 'password.required'    => 'The password is required.',
                 'status.required'      => 'The status field is required.',
@@ -252,6 +255,7 @@ class SettingController extends Controller
         if (empty($request->id)) {
             $data = array(
                 'merchant_id'                => $request->merchant_id,
+                'callback_domain'            => $request->callback_domain,
                 'key'                        => $request->key ?? "",
                 'password'                   => $request->password ?? "",
                 'status'                     => $request->status,
@@ -261,6 +265,7 @@ class SettingController extends Controller
 
             $data = array(
                 'merchant_id'                => $request->merchant_id,
+                'callback_domain'            => $request->callback_domain,
                 'status'                     => $request->status,
             );
             $resdata['id']                    = ApiKey::where('id', $request->id)->update($data);

@@ -228,9 +228,7 @@ class UserController extends Controller
 
         $id       = $request->id;
         $history  = ApiKey::where('id', $id)->first();
-       
         return response()->json($history, 200); // Return the result as JSON
-
     }
 
     public function allUsers(Request $request)

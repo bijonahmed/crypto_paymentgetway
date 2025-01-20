@@ -17,6 +17,7 @@ class ApiKey extends Authenticatable
   
   protected $fillable = [
     'merchant_id',
+    'callback_domain',
     'key',
     'password',
     'status'

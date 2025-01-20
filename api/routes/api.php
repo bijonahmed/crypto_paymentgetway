@@ -60,6 +60,7 @@ Route::group([
     Route::get('/dynamicLeftSidebarmenu', [PublicController::class, 'dynamicMenuLeftSidebar']);
     Route::get('/filterGames', [PublicController::class, 'filterGames']);
     Route::post('/getMerchentRequest', [PublicController::class, 'getMerchentRequest']);
+    Route::get('/getApiReport', [PublicController::class, 'getTronApiReport']);
 });
 
 Route::middleware(['auth:api', CheckUserStatus::class])->group(function () {
@@ -127,6 +128,18 @@ Route::middleware(['auth:api', CheckUserStatus::class])->group(function () {
         Route::post('save', [WalletAddressController::class, 'save']);
         Route::get('checkWalletInfo', [WalletAddressController::class, 'checkWalletInfo']);
     });
+
+
+ Route::group([
+        'prefix' => 'deposit'
+    ], function () {
+        Route::get('getDepositList', [DepositController::class, 'getDepositfetchdata']);
+        Route::get('countMerchantData', [DepositController::class, 'countMerchantData']);
+        Route::get('getDepositReport', [DepositController::class, 'getDepositReport']);
+        Route::get('depositrowCheck', [DepositController::class, 'depositrowCheck']);
+        Route::post('updateDepositStatus', [DepositController::class, 'updateDepositStatus']);
+    });
+    
     
      
     Route::group([
@@ -148,7 +161,6 @@ Route::middleware(['auth:api', CheckUserStatus::class])->group(function () {
         Route::get('getwalleteAddress', [PublicController::class, 'getwalleteAddress']);
         Route::post('depositRequest', [PublicController::class, 'depositRequest']);
         Route::get('checkMerchentDetails', [PublicController::class, 'checkMerchentDetails']);
-      
     });
 
 });

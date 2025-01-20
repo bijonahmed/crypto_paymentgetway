@@ -278,6 +278,7 @@ const ConfigrrationWalletList = () => {
 
                                 <th className="text-center">API Key</th>
                                 <th className="text-center">Password</th>
+                                <th className="text-center">Callback Domain</th>
                                 <th className="text-center">Status</th>
                                 <th className="text-center">Created</th>
                                 <th className="text-center">Action</th>
@@ -291,6 +292,7 @@ const ConfigrrationWalletList = () => {
                                     <td><small>{item.company_name}({item.name})</small></td>
                                     <td><small>{item.key}</small></td>
                                     <td><small>{item.password}</small></td>
+                                    <td className="text-center"><small>{item.callback_domain}</small></td>
                                     <td className="text-center"><small>{item.status}</small></td>
                                     <td className="text-center"><small>{item.created_at}</small></td>
                                     <td className="text-center"><a href="#" onClick={() => handleEdit(item.id)}><small><i className="lni lni-pencil-alt"></i>&nbsp;Edit</small></a>

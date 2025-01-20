@@ -6,20 +6,68 @@ import axios from "/config/axiosConfig";
 import GuestNavbar from "../components/Navbar";
 import { useNavigate } from "react-router-dom";
 import Footer from "../components/Footer";
+import Loader from "../components/Loader";
 import LeftSideBarComponent from "../components/LeftSideBarComponent";
 import { LanguageContext } from "../context/LanguageContext";
 import AuthUser from "../components/AuthUser";
 
-
 const Index = () => {
-
   const [isLoading, setIsLoading] = useState(true);
-  // const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const { content } = useContext(LanguageContext);
+  const [merchantData, setMerchantData] = useState([]);
+  const [depositCount, setDepositCount] = useState(0);
+  const [depositAmt, setDepositAmt] = useState(0);
+  const [merchantCount, setMerchentCount] = useState(0);
+  const [bulkAddressCount, setBulkAddressCount] = useState(0);
 
+  const rawToken = sessionStorage.getItem("token");
+  const token = rawToken?.replace(/^"(.*)"$/, "$1");
+
+  const fetchMerchantData = async () => {
+    try {
+      setLoading(true);
+      if (!token) {
+        throw new Error("Token not found in sessionStorage");
+      }
+      const response = await axios.get(`/deposit/getDepositList`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setMerchantData(response.data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const countData = async () => {
+    try {
+      if (!token) {
+        throw new Error("Token not found in sessionStorage");
+      }
+      const response = await axios.get(`/deposit/countMerchantData`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setDepositCount(response.data.data.countDeposit);
+      setDepositAmt(response.data.data.countDepositAmt);
+      setMerchentCount(response.data.data.countMerchant);
+      setBulkAddressCount(response.data.data.countBulkAddress);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
+  // Correctly closed useEffect hook
+  useEffect(() => {
+    countData();
+    fetchMerchantData();
+  }, []);
 
   return (
-
     <div>
       <Helmet>
         <title>Dashboard [Payment Getway]</title>
@@ -45,23 +93,36 @@ const Index = () => {
                     <div className="card-body">
                       <div className="d-flex align-items-center">
                         <div className="me-auto">
-                          <p className="mb-0 text-white">Total Orders</p>
-                          <h4 className="my-1 text-white">4805</h4>
-                          <p className="mb-0 font-13 text-white">+2.5% from last week</p>
+                          <p className="mb-0 text-white">Today Total Deposit</p>
+                          <h4 className="my-1 text-white">{depositCount}</h4>
                         </div>
                         <div id="chart1" />
                       </div>
                     </div>
                   </div>
                 </div>
+
+                <div className="col">
+                  <div className="card radius-10 bg-gradient-kyoto">
+                    <div className="card-body">
+                      <div className="d-flex align-items-center">
+                        <div className="me-auto">
+                          <p className="mb-0 text-dark">Today Deposit Amount</p>
+                          <h4 className="my-1 text-dark">${depositAmt}</h4>
+                        </div>
+                        <div id="chart4" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="col">
                   <div className="card radius-10 bg-gradient-ibiza">
                     <div className="card-body">
                       <div className="d-flex align-items-center">
                         <div className="me-auto">
-                          <p className="mb-0 text-white">Total Revenue</p>
-                          <h4 className="my-1 text-white">$84,245</h4>
-                          <p className="mb-0 font-13 text-white">+5.4% from last week</p>
+                          <p className="mb-0 text-white">Total Merchant</p>
+                          <h4 className="my-1 text-white">{merchantCount}</h4>
                         </div>
                         <div id="chart2" />
                       </div>
@@ -73,157 +134,120 @@ const Index = () => {
                     <div className="card-body">
                       <div className="d-flex align-items-center">
                         <div className="me-auto">
-                          <p className="mb-0 text-white">Bounce Rate</p>
-                          <h4 className="my-1 text-white">34.6%</h4>
-                          <p className="mb-0 font-13 text-white">-4.5% from last week</p>
+                          <p className="mb-0 text-white">
+                            Total Wallet Address
+                          </p>
+                          <h4 className="my-1 text-white">
+                            {bulkAddressCount}
+                          </h4>
                         </div>
                         <div id="chart3" />
                       </div>
                     </div>
                   </div>
                 </div>
-                <div className="col">
-                  <div className="card radius-10 bg-gradient-kyoto">
-                    <div className="card-body">
-                      <div className="d-flex align-items-center">
-                        <div className="me-auto">
-                          <p className="mb-0 text-dark">Total Customers</p>
-                          <h4 className="my-1 text-dark">8.4K</h4>
-                          <p className="mb-0 font-13 text-dark">+8.4% from last week</p>
-                        </div>
-                        <div id="chart4" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>{/*end row*/}
+              </div>
+              {/*end row*/}
 
               <div className="card radius-10">
                 <div className="card-header">
                   <div className="d-flex align-items-center">
                     <div>
-                      <h6 className="mb-0">Recent Orders</h6>
-                    </div>
-                    <div className="dropdown ms-auto">
-                      <a className="dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown"><i className="bx bx-dots-horizontal-rounded font-22 text-option" />
-                      </a>
-                      <ul className="dropdown-menu">
-                        <li><a className="dropdown-item" href="#">Action</a>
-                        </li>
-                        <li><a className="dropdown-item" href="#">Another action</a>
-                        </li>
-                        <li>
-                          <hr className="dropdown-divider" />
-                        </li>
-                        <li><a className="dropdown-item" href="#">Something else here</a>
-                        </li>
-                      </ul>
+                      <h6 className="mb-0">Today Deposit List</h6>
                     </div>
                   </div>
                 </div>
                 <div className="card-body">
-                  <div className="table-responsive">
-                    <table className="table align-middle mb-0">
-                      <thead className="table-light">
-                        <tr>
-                          <th>Product</th>
-                          <th>Photo</th>
-                          <th>Product ID</th>
-                          <th>Status</th>
-                          <th>Amount</th>
-                          <th>Date</th>
-                          <th>Shipping</th>
-                        </tr>
-                      </thead>
-                      <tbody><tr>
-                        <td>Iphone 5</td>
-                        <td><img src="/assets/images/products/18.png" className="product-img-2" alt="product img" /></td>
-                        <td>#9405822</td>
-                        <td><span className="badge bg-gradient-quepal text-white shadow-sm w-100">Paid</span></td>
-                        <td>$1250.00</td>
-                        <td>03 Feb 2020</td>
-                        <td><div className="progress" style={{ height: 5 }}>
-                          <div className="progress-bar bg-gradient-quepal" role="progressbar" style={{ width: '100%' }} />
-                        </div></td>
-                      </tr>
-                        <tr>
-                          <td>Earphone GL</td>
-                          <td><img src="/assets/images/products/16.png" className="product-img-2" alt="product img" /></td>
-                          <td>#8304620</td>
-                          <td><span className="badge bg-gradient-blooker text-white shadow-sm w-100">Pending</span></td>
-                          <td>$1500.00</td>
-                          <td>05 Feb 2020</td>
-                          <td><div className="progress" style={{ height: 5 }}>
-                            <div className="progress-bar bg-gradient-blooker" role="progressbar" style={{ width: '60%' }} />
-                          </div></td>
-                        </tr>
-                        <tr>
-                          <td>HD Hand Camera</td>
-                          <td><img src="/assets/images/products/19.png" className="product-img-2" alt="product img" /></td>
-                          <td>#4736890</td>
-                          <td><span className="badge bg-gradient-bloody text-white shadow-sm w-100">Failed</span></td>
-                          <td>$1400.00</td>
-                          <td>06 Feb 2020</td>
-                          <td><div className="progress" style={{ height: 5 }}>
-                            <div className="progress-bar bg-gradient-bloody" role="progressbar" style={{ width: '70%' }} />
-                          </div></td>
-                        </tr>
-                        <tr>
-                          <td>Clasic Shoes</td>
-                          <td><img src="/assets/images/products/04.png" className="product-img-2" alt="product img" /></td>
-                          <td>#8543765</td>
-                          <td><span className="badge bg-gradient-quepal text-white shadow-sm w-100">Paid</span></td>
-                          <td>$1200.00</td>
-                          <td>14 Feb 2020</td>
-                          <td><div className="progress" style={{ height: 5 }}>
-                            <div className="progress-bar bg-gradient-quepal" role="progressbar" style={{ width: '100%' }} />
-                          </div></td>
-                        </tr>
-                        <tr>
-                          <td>Sitting Chair</td>
-                          <td><img src="/assets/images/products/11.png" className="product-img-2" alt="product img" /></td>
-                          <td>#9629240</td>
-                          <td><span className="badge bg-gradient-blooker text-white shadow-sm w-100">Pending</span></td>
-                          <td>$1500.00</td>
-                          <td>18 Feb 2020</td>
-                          <td><div className="progress" style={{ height: 5 }}>
-                            <div className="progress-bar bg-gradient-blooker" role="progressbar" style={{ width: '60%' }} />
-                          </div></td>
-                        </tr>
-                        <tr>
-                          <td>Hand Watch</td>
-                          <td><img src="/assets/images/products/17.png" className="product-img-2" alt="product img" /></td>
-                          <td>#8506790</td>
-                          <td><span className="badge bg-gradient-bloody text-white shadow-sm w-100">Failed</span></td>
-                          <td>$1800.00</td>
-                          <td>21 Feb 2020</td>
-                          <td><div className="progress" style={{ height: 5 }}>
-                            <div className="progress-bar bg-gradient-bloody" role="progressbar" style={{ width: '40%' }} />
-                          </div></td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
+               
+                  {loading ? (
+                    <center>
+                     <div className="spinner-border" role="status"> <span className="visually-hidden">Loading...</span>
+                     </div>
+                   
+                      </center>
+                  ) : (
+                    <div className="table-responsive">
+                      <table className="table align-middle mb-0 table-hover">
+                        <thead className="table-light">
+                          <tr>
+                            <th>Merchant Name</th>
+                            <th>Deposit ID</th>
+                            <th>Username[ID]</th>
+                            <th>Amount</th>
+                            <th>Created At</th>
+                            <th>Status</th>
+                            <th>Crypto Wallet Address</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {merchantData.map((data, index) => (
+                            <tr key={index}>
+                              <td>{data.merchant_name}</td>
+                              <td>
+                                <small>{data.depositID}</small>
+                              </td>
+                              <td>
+                                <small>
+                                  {data.username}[{data.user_id}]
+                                </small>
+                              </td>
+                              <td>
+                                <small>${data.deposit_amount}</small>
+                              </td>
+                              <td>
+                                <small>{data.created_at}</small>
+                              </td>
+                              <td>
+                                <small>
+                                  <span
+                                    className={`badge ${
+                                      data.status == 0
+                                        ? "bg-gradient-blooker"
+                                        : data.status == 1
+                                        ? "bg-gradient-quepal"
+                                        : data.status == 2
+                                        ? "bg-gradient-bloody"
+                                        : ""
+                                    } text-white shadow-sm w-100`}
+                                  >
+                                    {data.status == 0
+                                      ? "Pending"
+                                      : data.status == 1
+                                      ? "Active"
+                                      : data.status == 2
+                                      ? "Rejected"
+                                      : ""}
+                                  </span>
+                                </small>
+                              </td>
+                              <td>
+                                <small>{data.to_crypto_wallet_address}</small>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
                 </div>
               </div>
-
             </div>
           </div>
           {/*end page wrapper */}
           {/*start overlay*/}
           <div className="overlay toggle-icon" />
 
-          <Link to="#" className="back-to-top"><i className="bx bxs-up-arrow-alt" /></Link>
+          <Link to="#" className="back-to-top">
+            <i className="bx bxs-up-arrow-alt" />
+          </Link>
 
           <Footer />
         </div>
         {/*end wrapper*/}
-
       </div>
 
       {/* END */}
     </div>
-
   );
 };
 
