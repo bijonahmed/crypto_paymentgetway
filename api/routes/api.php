@@ -56,7 +56,7 @@ Route::group([
 Route::group([
     'prefix' => 'public'
 ], function () {
-
+    Route::get('/getLogApiReport', [PublicController::class, 'getLogApiReport']);
     Route::get('/dynamicLeftSidebarmenu', [PublicController::class, 'dynamicMenuLeftSidebar']);
     Route::get('/filterGames', [PublicController::class, 'filterGames']);
     Route::post('/getMerchentRequest', [PublicController::class, 'getMerchentRequest']);

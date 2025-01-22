@@ -18,6 +18,7 @@ import RoleList from "../pages/users/RoleList.jsx";
 import RoleAdd from "../pages/users/Addrole.jsx";
 import BulkAddress from "../pages/configration/address/BulkAddress.jsx";
 import DepositReport from "../pages/report/DepositReport.jsx";
+import CheckLogAPI from "../pages/report/CheckLogAPI.jsx";
 
 
 
@@ -84,6 +85,7 @@ const AppRouter = () => {
       <Route path="/configration/address/merchant-address/:id" element={<BulkAddress />} />
       <Route path="/wallet/global-wallet-edit/:id" element={<GlobalWalletAddressEdit />} />
       <Route path="/report/tronscan-api" element={<CheckTronScanAPI />} />
+      <Route path="/report/check-api-log" element={<CheckLogAPI />} />
       <Route path="/dashboard" element={<Dashboard />} />
     </Routes>
   );

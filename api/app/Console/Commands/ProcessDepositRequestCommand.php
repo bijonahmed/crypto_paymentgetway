@@ -67,10 +67,10 @@ class ProcessDepositRequestCommand extends Command
 
 
                 // if ($contractAddress === $to && $dateTime === $db_datetime) {
-                if ($contractAddress == $from) {
+                if ($contractAddress == $to) {
 
                     Deposit::where('id', $id)->update(['status' => 1]);
-                    BulkAddress::where('walletAddress', $from)->update(['block_status' => 0]);
+                    BulkAddress::where('walletAddress', $to)->update(['block_status' => 0]);
 
                     if (!empty($checkMerchant)) {
                         $callbackUrl = rtrim($checkMerchant->callback_domain, '/') . '/api/public/callbackStatus';
@@ -92,7 +92,7 @@ class ProcessDepositRequestCommand extends Command
                         // Execute the cURL request
                         $response = curl_exec($ch);
                     }
-
+                   
 
                     //echo "Deposit request id: {$id}, API Wallet To Address: {$to}---DB add: $contractAddress<br>";
                     //echo "Date and Time: {$dateTime}----------DB date: $db_datetime<br><hr/>";
@@ -101,7 +101,7 @@ class ProcessDepositRequestCommand extends Command
                     Log::channel('apilog')->info(
                         <<<LOG
                     Deposit id: {$id}, 
-                    API Respone Wallet Address: {$from}
+                    API Respone Wallet Address: {$to}
                     DB add: {$contractAddress}
                     Date and Time: {$dateTime}
                     DB date: {$db_datetime}
@@ -109,6 +109,9 @@ class ProcessDepositRequestCommand extends Command
                     LOG
                     );
                 } else {
+
+					Deposit::where('id', $id)->update(['status' => 2]);
+
                     //echo "Deposit request id: {$id}, API Wallet To Address: {$to}---DB add: $contractAddress<br>";
                     //echo "Date and Time: {$dateTime}----------DB date: $db_datetime<br><hr/>";
                     //Log::channel('apilog')->info("Failed, Deposit id: {$id}, API Wallet To Address: {$to}---DB add: $contractAddress, Date and Time: {$dateTime}----------DB date: $db_datetime");
@@ -116,7 +119,7 @@ class ProcessDepositRequestCommand extends Command
                         <<<LOG
                     Failed
                     Deposit id: {$id}, 
-                    API Respone Wallet Address: {$from}
+                    API Respone Wallet Address: {$to}
                     DB add: {$contractAddress}
                     Date and Time: {$dateTime}
                     DB date: {$db_datetime}

@@ -16,6 +16,26 @@ class PublicController extends Controller
 {
 
 
+    public function getLogApiReport()
+    {
+
+        $logFilePath = storage_path('logs/api-log.log');
+
+        if (file_exists($logFilePath)) {
+            $logContent = file_get_contents($logFilePath);
+            return response()->json([
+                'status' => 'success',
+                'data' => $logContent,
+            ], 200);
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Log file not found.',
+            ], 404);
+        }
+    }
+
+
     public function depositRequest(Request $request)
     {
 
@@ -235,6 +255,12 @@ class PublicController extends Controller
             [
                 'label' => 'Check TroNSCAN API',
                 'path' => '/report/tronscan-api',
+                'icon' => 'bx bx-repeat',
+                'submenu' => []
+            ],
+            [
+                'label' => 'Transaction API LOG',
+                'path' => '/report/check-api-log',
                 'icon' => 'bx bx-repeat',
                 'submenu' => []
             ],
