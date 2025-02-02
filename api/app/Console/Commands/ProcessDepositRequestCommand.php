@@ -102,8 +102,8 @@ class ProcessDepositRequestCommand extends Command
                         <<<LOG
                     Deposit id: {$id}, 
                     API Respone Wallet Address: {$to}
+                    AOU Resoibse Date and Time: {$dateTime}
                     DB add: {$contractAddress}
-                    Date and Time: {$dateTime}
                     DB date: {$db_datetime}
                     _____________________________________________________________________________________________________________
                     LOG
@@ -120,8 +120,8 @@ class ProcessDepositRequestCommand extends Command
                     Failed
                     Deposit id: {$id}, 
                     API Respone Wallet Address: {$to}
+                    API Respone Date and Time: {$dateTime}
                     DB add: {$contractAddress}
-                    Date and Time: {$dateTime}
                     DB date: {$db_datetime}
                     _____________________________________________________________________________________________________________
                     LOG

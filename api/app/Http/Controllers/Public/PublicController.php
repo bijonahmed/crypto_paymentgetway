@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Public;
 use Cart;
 use Carbon\Carbon;
 use App\Models\Deposit;
+use App\Models\User;
 use App\Models\ApiKey;
 use App\Models\BulkAddress;
 use Illuminate\Http\Request;
@@ -112,18 +113,24 @@ class PublicController extends Controller
 
 
         $chkmerchant = BulkAddress::where('merchant_id', $merchentId)->where('status', 1)->where('block_status', 0)->inRandomOrder()->first(); // Get a single random row
-
+        $mId         = $merchentId;
+        
 
         if ($chkmerchant) {
             $list = [
                 'id'            => (int)$chkmerchant->id,
-                'merchant_id'   => (int)$chkmerchant->merchant_id,
+                'merchant_id'   => $mId,
                 'walletAddress' => $chkmerchant->walletAddress,
             ];
         } else {
             $list = []; // Return an empty array if no data is found
         }
 
+
+        $chkMechant = User::where('id',3)->first();
+        //dd($chkMechant);
+        
+        $chkmerchant['slug']= "After request send api/deposit/sendDepositRequest response result put this slug";
 
         // Return response in JSON format
         if ($chkmerchant) {
