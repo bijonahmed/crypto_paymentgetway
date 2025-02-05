@@ -63,6 +63,15 @@ Route::group([
     Route::get('/getApiReport', [PublicController::class, 'getTronApiReport']);
 });
 
+ Route::group([
+        'prefix' => 'address'
+    ], function () {
+        Route::get('getwalleteAddress', [PublicController::class, 'getwalleteAddress']);
+        Route::post('depositRequest', [PublicController::class, 'depositRequest']);
+        Route::get('checkMerchentDetails', [PublicController::class, 'checkMerchentDetails']);
+    });
+
+
 Route::middleware(['auth:api', CheckUserStatus::class])->group(function () {
 
     Route::group([
@@ -155,12 +164,5 @@ Route::middleware(['auth:api', CheckUserStatus::class])->group(function () {
         Route::get('languagerow/{id}', [SettingController::class, 'chkLanguagerow']);
     });
     
-     Route::group([
-        'prefix' => 'address'
-    ], function () {
-        Route::get('getwalleteAddress', [PublicController::class, 'getwalleteAddress']);
-        Route::post('depositRequest', [PublicController::class, 'depositRequest']);
-        Route::get('checkMerchentDetails', [PublicController::class, 'checkMerchentDetails']);
-    });
-
+    
 });
